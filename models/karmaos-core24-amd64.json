@@ -12,61 +12,61 @@
 
   "snaps": [
     {
-      "name": "pc-kernel",
-      "type": "kernel",
-      "default-channel": "24/stable"
-    },
-    {
       "name": "pc",
       "type": "gadget",
       "default-channel": "24/stable"
     },
     {
-      "name": "snapd",
-      "type": "snapd",
-      "default-channel": "latest/stable"
+      "name": "pc-kernel",
+      "type": "kernel",
+      "default-channel": "24/stable"
     },
     {
       "name": "core24",
       "type": "base",
       "default-channel": "latest/stable"
     },
+    {
+      "name": "snapd",
+      "type": "snapd",
+      "default-channel": "latest/stable"
+    },
 
     {
       "name": "plasma-core24-desktop",
       "type": "app",
-      "default-channel": "latest/stable"
+      "default-channel": "stable"
     },
     {
       "name": "plasma-desktop-session",
       "type": "app",
-      "default-channel": "latest/stable"
+      "default-channel": "stable"
     },
 
     {
       "name": "brave",
       "type": "app",
-      "default-channel": "latest/stable"
+      "default-channel": "stable"
     },
     {
       "name": "libreoffice",
       "type": "app",
-      "default-channel": "latest/stable"
+      "default-channel": "stable"
     },
     {
       "name": "thunderbird",
       "type": "app",
-      "default-channel": "latest/stable"
+      "default-channel": "stable"
     },
     {
       "name": "vlc",
       "type": "app",
-      "default-channel": "latest/stable"
+      "default-channel": "stable"
     },
     {
       "name": "snap-store",
       "type": "app",
-      "default-channel": "latest/stable"
+      "default-channel": "stable"
     }
   ]
 }
