@@ -1,0 +1,66 @@
+type: model
+authority-id: N8QOMWILcV2etddoinjqxG62LwIHiK92
+series: 16
+brand-id: N8QOMWILcV2etddoinjqxG62LwIHiK92
+model: karmaos-pc-amd64
+architecture: amd64
+base: core24
+grade: dangerous
+snaps:
+  -
+    default-channel: 24/stable
+    name: pc
+    type: gadget
+  -
+    default-channel: 24/stable
+    name: pc-kernel
+    type: kernel
+  -
+    default-channel: latest/stable
+    name: core24
+    type: base
+  -
+    default-channel: latest/stable
+    name: snapd
+    type: snapd
+  -
+    default-channel: latest/stable
+    name: console-conf
+    type: app
+  -
+    default-channel: latest/edge
+    name: plasma-desktop-session
+    type: app
+  -
+    default-channel: latest/stable
+    name: brave
+    type: app
+  -
+    default-channel: latest/stable
+    name: libreoffice
+    type: app
+  -
+    default-channel: latest/stable
+    name: thunderbird
+    type: app
+  -
+    default-channel: latest/stable
+    name: vlc
+    type: app
+  -
+    default-channel: latest/stable
+    name: snap-store
+    type: app
+timestamp: 2025-12-29T22:18:14Z
+sign-key-sha3-384: YHuln6rWuWDq2HhRIRSyhuQGquH-UIlRcxO27U4CkO_UjKMdMXTivrsT4eDK3oI_
+
+AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUv4nAAoJEB24BZntyftdBT4P/0F/
+I5JIaRmNLAS8veltqxcdYmzg21tmrY9/v/Sy/t0DgVLd3NoB/udb+1K6zJ8uM+9Ggg2H5t2PBo/i
+ZHF8lsZIJX1wUhg7PJrEDPGa5CPoitBBvy50S+kyRN3iRToUigpqsOhuxKpUAvzbtareWVkbU+rR
+qT3vc0XgCQHhON/+u/mrq1qYrRqALgI7GZSemiHdYovXUY9MaSqXbH9yQMscnbDo6TbqS+cPPJOP
+622rBH9Pe1aTJR8SclCtfBkhb62oWr2dPBqhcUL8+vH37weU8x6ABgZDkBcTC9hffqbmsItu1NIY
+4Efr/0OJKF4xxbNnRp9QTrNQwUyU0znVG4U5WNao/A9+fzNUxYCKym2i3YYmzjscJ6BUvw4Y6Efm
+WiqMO+6YY6WbIsEFxbqf3/sXxa0HplIRqbKckNZRxSnd6wa4PFIc5sD4vFqeQa6eT755HP+qtdOr
+hvTUo1KnsMrg1fqr5D5MPpRcPK3g55cim5v4zc5xS0iKXn6tzW/M30elL2z2P8AsJA/06CZFSqR8
+U92n69H5EHh8VCwahMdph9jKQPKIQ4qi/hIZExGMNJQ8NYsyitZyqsfHxpOgZqj/LtH+CQUZ7jLV
+k4SlHQSAfYLZc4hC/jgB3atmtr/ewBiVBJGoJximAkvua6bv6aYjswHryank7pz7OwovVz5c

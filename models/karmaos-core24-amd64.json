@@ -1,15 +1,13 @@
 {
   "type": "model",
   "series": "16",
-  "model": "com.karmaos.pc.amd64",
+  "authority-id": "REPLACE_WITH_YOUR_BRAND_ACCOUNT_ID",
+  "brand-id": "REPLACE_WITH_YOUR_BRAND_ACCOUNT_ID",
+  "model": "karmaos-pc-amd64",
   "architecture": "amd64",
   "base": "core24",
   "grade": "dangerous",
-
-  "authority-id": "TODO-AUTHORITY-ID",
-  "brand-id": "TODO-BRAND-ID",
-  "timestamp": "2025-12-29T00:00:00Z",
-
+  "timestamp": "REPLACE_AT_SIGN_TIME_WITH_DATE_ISECONDS_UTC",
   "snaps": [
     {
       "name": "pc",
@@ -31,42 +29,40 @@
       "type": "snapd",
       "default-channel": "latest/stable"
     },
-
     {
-      "name": "plasma-core24-desktop",
+      "name": "console-conf",
       "type": "app",
-      "default-channel": "stable"
+      "default-channel": "latest/stable"
     },
     {
       "name": "plasma-desktop-session",
       "type": "app",
-      "default-channel": "stable"
+      "default-channel": "latest/edge"
     },
-
     {
       "name": "brave",
       "type": "app",
-      "default-channel": "stable"
+      "default-channel": "latest/stable"
     },
     {
       "name": "libreoffice",
       "type": "app",
-      "default-channel": "stable"
+      "default-channel": "latest/stable"
     },
     {
       "name": "thunderbird",
       "type": "app",
-      "default-channel": "stable"
+      "default-channel": "latest/stable"
     },
     {
       "name": "vlc",
       "type": "app",
-      "default-channel": "stable"
+      "default-channel": "latest/stable"
     },
     {
       "name": "snap-store",
       "type": "app",
-      "default-channel": "stable"
+      "default-channel": "latest/stable"
     }
   ]
 }

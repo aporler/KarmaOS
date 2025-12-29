@@ -1,8 +1,11 @@
+
 # Build outputs
 /dist/
 /out/
 /logs/
+*.log
 
 # OS / editor
 .DS_Store
 .vscode/
+
