@@ -1,0 +1,28 @@
+name: Build KarmaOS 26.01 alpha
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install ubuntu-image
+        run: |
+          sudo snap install ubuntu-image --classic
+
+      - name: Build image
+        run: bash scripts/build.sh
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: karmaos-26.01-amd64
+          path: dist/karmaos-26.01-amd64.img
+          if-no-files-found: error
