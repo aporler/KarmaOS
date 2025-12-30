@@ -5,7 +5,7 @@ summary: KarmaOS PC gadget
 description: |
   KarmaOS 26.01 - A beautiful Ubuntu Core based desktop OS
   Custom PC gadget with KarmaOS branding
-grade: dangerous
+grade: devel
 confinement: strict
 type: gadget
 architectures:
