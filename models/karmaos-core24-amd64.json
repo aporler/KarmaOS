@@ -10,6 +10,11 @@
   "timestamp": "2025-12-30T00:00:00Z",
   "snaps": [
     {
+      "name": "pc",
+      "type": "gadget",
+      "default-channel": "24/stable"
+    },
+    {
       "name": "core24",
       "type": "base",
       "default-channel": "latest/stable"
@@ -31,16 +36,6 @@
     },
     {
       "name": "console-conf",
-      "type": "app",
-      "default-channel": "latest/stable"
-    },
-    {
-      "name": "kde-frameworks-6-core24",
-      "type": "app",
-      "default-channel": "latest/stable"
-    },
-    {
-      "name": "plasma-desktop",
       "type": "app",
       "default-channel": "latest/stable"
     }
