@@ -1,0 +1,39 @@
+name: Build KarmaOS Welcome Snap
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'snaps/karmaos-welcome/**'
+      - '.github/workflows/build-snap.yml'
+  workflow_dispatch:
+
+jobs:
+  build-snap:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Snapcraft
+        run: |
+          sudo snap install snapcraft --classic
+
+      - name: Build snap
+        run: |
+          cd snaps/karmaos-welcome
+          snapcraft pack --destructive-mode
+
+      - name: Upload snap artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: karmaos-welcome-amd64
+          path: snaps/karmaos-welcome/*.snap
+          if-no-files-found: error
+
+      - name: Get snap info
+        run: |
+          cd snaps/karmaos-welcome
+          ls -lh *.snap
+          snap info --verbose *.snap || unsquashfs -l *.snap | head -n 20
