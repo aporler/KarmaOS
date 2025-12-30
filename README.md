@@ -33,11 +33,24 @@ Le template non signé est ici: `models/karmaos-core24-amd64.json`.
 Exemple (dans une VM Ubuntu):
 
 - `snap create-key karmaos`
-- Mettre à jour `authority-id`, `brand-id` et `timestamp` dans le JSON
+- Mettre à jour `authority-id`, `brand-id` et `timestamp` dans le JSON (idéalement un timestamp UTC récent)
 - `snap sign -k karmaos models/karmaos-core24-amd64.json > models/karmaos-core24-amd64.model`
+
+### Signer en CI (recommandé)
+
+Si vous ne voulez pas committer le `.model` signé, vous pouvez le signer pendant GitHub Actions.
+
+1. Sur une machine Ubuntu qui a la clé:
+	- `snap export-key karmaos > karmaos.key`
+	- `base64 -w0 karmaos.key` (copiez la sortie)
+2. Dans GitHub  **Settings  Secrets and variables  Actions**:
+	- Ajouter un secret `KARMAOS_SNAP_EXPORT_KEY_B64` avec la valeur base64.
+3. Le script [scripts/build.sh](scripts/build.sh) importera la clé et signera un `.model` temporaire avec un timestamp courant.
 
 ## Dépannage
 
 - **Workflow rouge / échec sur “Build image”**: lire les logs de `scripts/build.sh`.
 - **Artifact absent**: si le build échoue avant la génération de l’image, aucun artifact n’est upload.
 - **Erreur ubuntu-image / aucune image produite**: vérifier le `.model` et les snaps/channels.
+- **"timestamp outside of signing key validity"**: le `timestamp` du `.model` est antérieur à la date de validité `since` de la clé enregistrée dans le store.
+	- Fix: régénérer et re-signer le `.model` avec un timestamp plus récent, ou utiliser la signature en CI ci-dessus.

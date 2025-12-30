@@ -18,6 +18,9 @@ jobs:
           sudo snap install ubuntu-image --classic
 
       - name: Build image
+        env:
+          KARMAOS_SNAP_EXPORT_KEY_B64: ${{ secrets.KARMAOS_SNAP_EXPORT_KEY_B64 }}
+          KARMAOS_SNAP_KEY_NAME: karmaos
         run: bash scripts/build.sh
 
       - name: Upload image artifact
