@@ -1,0 +1,38 @@
+type: model
+authority-id: N8QOMWILcV2etddoinjqxG62LwIHiK92
+series: 16
+brand-id: N8QOMWILcV2etddoinjqxG62LwIHiK92
+model: karmaos-pc-amd64
+architecture: amd64
+base: core24
+grade: dangerous
+snaps:
+  -
+    default-channel: 24/stable
+    name: pc
+    type: gadget
+  -
+    default-channel: 24/stable
+    name: pc-kernel
+    type: kernel
+  -
+    default-channel: latest/stable
+    name: core24
+    type: base
+  -
+    default-channel: latest/stable
+    name: snapd
+    type: snapd
+timestamp: 2025-12-30T00:00:00Z
+sign-key-sha3-384: YHuln6rWuWDq2HhRIRSyhuQGquH-UIlRcxO27U4CkO_UjKMdMXTivrsT4eDK3oI_
+
+AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpU1IHAAoJEB24BZntyftdJdUP+gPN
+2+tfm/BeDtI4dX/PlaX5RRLd2kISPPb0THllobT703CE3RjkBSTAjIrpHqj/xph+RTzqW9uSpvZd
+i5X/Z7Sig2fWtOWnkgNNgjnJKOq3UzWrLWGGIl8JWyTHRmVo6+tln+ei3B87COU6aGfOZs4/KkIT
+KVBHK0VtxmdDv/UYbImeHJSRnaSc4NZ6dWnFvihjXUzOiTnR4ppdy4wv4l9TnBGBb4v1T3bxJCSS
+haPicV5i9sNvWDgqIA13QIY8SJMLrI5z40d2J3+0pGE1XngqG2an4MgKOqUek5qdyGIKBaGhnD/G
+whFY4eqXyqkAYFOZz+GvZrdzRfNco2cfq8CTqS2RIf1zEGfJ7kVMZUj/UFbr7Z2lZ0NmmlKe21BY
+w+DmRrPweHHvPsRW23wJPiQKByW5TB+Af9wNRQK/4gro1HLxI72ZYYov7Dtm9fUcCLOMTgF8A7hJ
+RYlfe+tuQ2ky4axcR3GMDCC7popGQB03M98tn6XQeV/SJjmrSVd7yHZuTrl0SEDazJSvCzhrelKc
+n0XoqHc+MxB6hvUxy6dAKcUhh5/dJ7BTrGdWAkNCn7NIBuusH1V21byPgdOtwMlJsM0heUjs6WMW
+ZCPXki2lppdUdnMD3P0mtAVURh0jarHRU++cdu4FJFYr58PH0BCdzt2MhvtKawL1GJoR9CwC
