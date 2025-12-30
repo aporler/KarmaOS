@@ -49,6 +49,10 @@ snaps:
     type: app
   -
     default-channel: latest/stable
+    name: gnome-46-2404
+    type: app
+  -
+    default-channel: latest/stable
     name: gtk-common-themes
     type: app
   -
@@ -74,13 +78,13 @@ snaps:
 timestamp: 2025-12-30T00:00:00Z
 sign-key-sha3-384: YHuln6rWuWDq2HhRIRSyhuQGquH-UIlRcxO27U4CkO_UjKMdMXTivrsT4eDK3oI_
 
-AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUzQZAAoJEB24BZntyftd2v8QAJUS
-6bE1g7gv1wh+/uNA3Div9v7tl4zKvEGD0UI3+fIOH+E0ZT501Fp8XemdAJcEqMc/W0243KxPzyJP
-llfydnnd/L2PA1I2Lpb7D+EKTtUp54eFnrODMux3hl9X1IyDPCFkCEVqkTuWeBJTm8BJbXKE3waE
-xiZBLVPeIVCurFWopIuDcUxJZ9EmnKauPcRqvJNnVbo63hEAZyty/G1R9M3E3fMLgWyR1J7JXfq1
-WyFcSVYPU/mtKYm8PQh7JfcCZMKE6WIeA4v1YnmPqSDWH4CXlrmYwGL5zZscLuJ1XLKouLLQYhBI
-0X5RmJwOvOjaz8q6OJVHXy39DJLUhO9auuv59N+STVSHxPKkqP6ok2y7MHXdrEAX6yeIdtV7oY4h
-eIgMBfv/LwIhw9QZwXrRVUTuxECRvDAYnPcNJ4ZkCa3YUtmdiZwSSOl38qnFG1B+TPC3/yYstyds
-OEC6V/BapEc3UkOgylojh2Q5G/IiaJd46caiXllth3a/xObcQVVYqQqDnZl8jiW9gS2gyk9dI9Kn
-u0K7duTuY9KjykJMBEgTCzhzoKHg4yqz7aA+32iuwJFvbydznryxonpY0eTG2kvAfiQ2DwYclxp8
-fuLJdTs+Ta/+8sShnZbTOHLSRpbBVze1Pn/iuRy/Q7zqCS7qlrbLwz2VBAm5GOLLyYPJh14m
+AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUzTuAAoJEB24BZntyftdBIAP/iTN
+poUM0kbykcN9CjLZiZgut24p6o100bX8fX9aJVRu8K2bWQfmEjl02o/hRsoQhdDVT8VXCRiyNoRr
+Bu/N+Gb1NLE6H+Duc6KgFh8VXVwCdq8vUVL+9H7EWUsGrMaCXgyZLYS37bX9KfWe9g85MbSJ2zGN
+NdUiAqyzE+E4ewyIlpMCf2KbFjH9oALCaHDVvdIFeifnASIjr4hF7Hthn8F/D4rr8rBdvLfSDuv1
+dbp05qxke7vrn89dxwsODEiQjBbTVpH+riS4cMCZgP7EoH06yEq4mimigh8rLLnXhxS/CfL1T311
+lgQ6TGjGloqieoIgiqjn121WoAfG92mNu3zcLq6xQFLHLXVlgGoPy8sQCUY5bTCydfd+yfLqJRAl
+ydRlA5e2T9cXDyrDBQGrujdlYufQyEumB5QZvOj6FbJ1oKWn3HICf612nIv15mg5YsqkYoZtRnyN
+KuUU/uLPcETzW/ah4X04E0mW7KcLJUYxZWmXIZMrG1kjUrXgmPsSjQXarCfY2xHLSNJaJg0QZ12X
+3PV3iqiuDbFWKiAZCDgzu03QHiHUcQSkbyMRP1xUHwnUi2GZAdPdmOeVAZAwpA5rQRDvFIlG2NUO
+7Jpy8Ynea4xKq8xuyWK1MKnaiEYfZ4AVi98VlaK72Gza2iQiFhClDmgvVmx2evaq1tR2abSI

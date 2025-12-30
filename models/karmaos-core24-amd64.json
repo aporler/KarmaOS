@@ -60,6 +60,11 @@
       "default-channel": "latest/stable"
     },
     {
+      "name": "gnome-46-2404",
+      "type": "app",
+      "default-channel": "latest/stable"
+    },
+    {
       "name": "gtk-common-themes",
       "type": "app",
       "default-channel": "latest/stable"
