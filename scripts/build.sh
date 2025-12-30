@@ -115,6 +115,13 @@ fi
 
 require_cmd ubuntu-image
 
+# Préparer le snap karmaos-welcome local
+KARMAOS_WELCOME_SNAP="$ROOT_DIR/snaps/karmaos-welcome_26.01_amd64.snap"
+if [[ ! -f "$KARMAOS_WELCOME_SNAP" ]]; then
+  echo "WARNING: Local karmaos-welcome snap not found at: $KARMAOS_WELCOME_SNAP"
+  echo "         The image will be built without karmaos-welcome."
+fi
+
 SUDO=""
 if [[ "$(id -u)" -ne 0 ]] && command -v sudo >/dev/null 2>&1; then
   SUDO="sudo"
@@ -127,7 +134,16 @@ rm -f "$OUT_DIR"/*.img || true
 echo "==> Build KarmaOS ${MARKETING_VERSION} (Ubuntu Core ${ARCH}) image"
 echo "    Model: $MODEL_TO_USE"
 
-$SUDO ubuntu-image snap "$MODEL_TO_USE" --output-dir "$OUT_DIR"
+# Options pour ubuntu-image
+UBUNTU_IMAGE_OPTS=("--output-dir" "$OUT_DIR")
+
+# Ajouter le snap local s'il existe
+if [[ -f "$KARMAOS_WELCOME_SNAP" ]]; then
+  echo "    Including local snap: $KARMAOS_WELCOME_SNAP"
+  UBUNTU_IMAGE_OPTS+=("--snap" "$KARMAOS_WELCOME_SNAP")
+fi
+
+$SUDO ubuntu-image snap "$MODEL_TO_USE" "${UBUNTU_IMAGE_OPTS[@]}"
 
 IMG_PATH="$(find "$OUT_DIR" -maxdepth 3 -type f -name '*.img' | head -n 1 || true)"
 if [[ -z "$IMG_PATH" ]]; then
