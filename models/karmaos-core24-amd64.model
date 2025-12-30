@@ -41,6 +41,10 @@ snaps:
     type: app
   -
     default-channel: latest/stable
+    name: gnome-42-2204
+    type: app
+  -
+    default-channel: latest/stable
     name: firefox
     type: app
   -
@@ -59,16 +63,16 @@ snaps:
     default-channel: latest/stable
     name: snap-store
     type: app
-timestamp: 2025-12-30T00:30:44Z
+timestamp: 2025-12-29T00:00:00Z
 sign-key-sha3-384: YHuln6rWuWDq2HhRIRSyhuQGquH-UIlRcxO27U4CkO_UjKMdMXTivrsT4eDK3oI_
 
-AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUx00AAoJEB24BZntyftdgWAP/1l7
-1MuVi1W82LDL36uNq/penaWUFeoOA4VBdCIhFXiLkPawE92o8JnQ8JHi6lu0vVYFth/6FGp712/v
-aeIBiz3s/bG9c2E59qHTTtT693EuroRHjBhzkSixDX/1EDYMZxZi7X9t0YnZBAVXjr6k0oKXoVKF
-rXBawCjGuKJQJqhzLg3yrAN57papx386uzkZBo0/7ufanT4y6IUitx2s/IwCV6sbkFSoIzQ3YHQ7
-o2G5xQG8f7KWYcEY8iv0rYIjexBzm/7iLX0eQt0pEC0PBUDr/TqFQSEfJRn2Ecv9nQBCFanqKLYh
-Hf40sNxxeY29BDM4IpbC7nd3hpZw1/TH3F0bs4Fg1exxN6s5c84+XBF40pO73WBVh6MUg5ducyXU
-82UbVrmAFx22GlXI7icGfy+lwlV7G/4bbdlDYUaIwCWq/GUVqnkAQcv+DiIivSTs1iXuW530w/6/
-wOJ2QmLPbKnlwhFZbWX3MLkg5DGOfaV4AbrBfrklm1igwsVLwPXs+Qm1NkGgTfIAOsR319XQfOdC
-BiHMI2p3WYA5nrHMeqfeEq4lw1Uq1bhC1Op2u01mi17KreZAMTf6yJI2vD5d8qez94guQKmJM/sm
-CXsH+6P+MK6QFhglIRGkezjkJN02KDj6qqfFAjztamtQZiH0lPEJ7Pvpu83IH0sN6cM+Oove
+AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUyvVAAoJEB24BZntyftdsZwP/3VQ
+Yfxx9VzjSFHMJBUFKfqCKE1kpXe9RQ5I4+tEUDzd35XPxEwXoYxMMSPBlVNp2o0aiWTecnyM45yU
+bck6GIy2szbH5HEW1ZZwCn16Im419MqXfTt8FqV2aSAuJSTl7vZiclve1odhHXFRRrwXdphJcVRr
+kj09A0qjToZwLB6YbgQxq01Yp7WlXupgkuPiOaELljqRPKHDMKOMScLunPRRUx5snaap5nE/DB2f
+q9LDNVyeVeC49NC13+DlhkX0PgA/x9uRE+GDkwnBaABfuvRJiN2mYdafoDz+/aBJIU7q2+p6WMoS
+amEItOWGOy6Fi+7xIDe1zSZ48RfdluSiOsVb50zwnpOh6zQVZR4C/j7gvHgGYcx/FsvotXjFTU+B
+9MPV2aPB6UsVqAh78pDw6CzuPXNrem97G+cj8LBtBSz5mObpY3/V3VvSFIFLE6PiBlQye7vcYnbb
+7wxPpexSSA1cDBpmH9t4jwdRuvEwxQDrYNEdFoBvUT4+sy88TEOc0uzsaS4mOEBYkDu2MHU0jqvI
+ukTryo9XBao49yhMEkw09mRaT1tNSULKE7kAd57qEPiDtV7Jo1atNnux9M+cB9F2ikRYVs8J2c3w
+3tQQWriDII3i5lad9dOiLMSZSvWmvFaYM1mpbXEanyK+qkBF+6L/XHmKzhJJvucys+Pr6pEC

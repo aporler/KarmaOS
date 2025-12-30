@@ -1,13 +1,13 @@
 {
   "type": "model",
   "series": "16",
-  "authority-id": "REPLACE_WITH_YOUR_BRAND_ACCOUNT_ID",
-  "brand-id": "REPLACE_WITH_YOUR_BRAND_ACCOUNT_ID",
+  "authority-id": "N8QOMWILcV2etddoinjqxG62LwIHiK92",
+  "brand-id": "N8QOMWILcV2etddoinjqxG62LwIHiK92",
   "model": "karmaos-pc-amd64",
   "architecture": "amd64",
   "base": "core24",
   "grade": "dangerous",
-  "timestamp": "REPLACE_AT_SIGN_TIME_WITH_DATE_ISECONDS_UTC",
+  "timestamp": "2025-12-29T00:00:00Z",
   "snaps": [
     {
       "name": "pc",
@@ -48,6 +48,11 @@
       "name": "plasma-desktop-session",
       "type": "app",
       "default-channel": "latest/edge"
+    },
+    {
+      "name": "gnome-42-2204",
+      "type": "app",
+      "default-channel": "latest/stable"
     },
     {
       "name": "firefox",
