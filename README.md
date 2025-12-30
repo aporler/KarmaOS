@@ -23,7 +23,23 @@ Le workflow utilise `ubuntu-image` (snap) et lance [scripts/build.sh](scripts/bu
 2. Ouvrez l’exécution du workflow **Build KarmaOS 26.01 alpha**.
 3. Téléchargez l’artifact **karmaos-26.01-amd64**.
 4. Vous y trouverez `dist/karmaos-26.01-amd64.img` et `dist/SHA256SUMS`.
+## Premier démarrage
 
+Après avoir booté KarmaOS, exécutez le script de configuration pour installer les apps recommandées :
+
+```bash
+# Depuis un terminal dans KarmaOS
+curl -fsSL https://raw.githubusercontent.com/aporler/KarmaOS/main/scripts/first-boot-setup.sh | bash
+```
+
+Ou manuellement :
+```bash
+snap install snap-store
+snap install firefox
+snap install gnome-46-2404
+```
+
+Apps optionnelles disponibles : `libreoffice`, `thunderbird`, `vlc`, `gimp`, `code`
 ## Regénérer le modèle signé (optionnel)
 
 Le build nécessite un **model assertion signé**: `models/karmaos-core24-amd64.model`.
