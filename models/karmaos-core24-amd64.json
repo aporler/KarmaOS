@@ -35,6 +35,11 @@
       "default-channel": "latest/stable"
     },
     {
+      "name": "bare",
+      "type": "base",
+      "default-channel": "latest/stable"
+    },
+    {
       "name": "snapd",
       "type": "snapd",
       "default-channel": "latest/stable"
