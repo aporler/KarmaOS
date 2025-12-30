@@ -32,14 +32,36 @@ else
   ACCEL_OPT="-machine type=q35,accel=hvf"
 fi
 
+# Trouve le firmware UEFI (OVMF/EDK2)
+QEMU_SHARE="/opt/homebrew/share/qemu"
+if [[ ! -d "$QEMU_SHARE" ]]; then
+  QEMU_SHARE="/usr/local/share/qemu"
+fi
+
+OVMF_CODE="$QEMU_SHARE/edk2-x86_64-code.fd"
+if [[ ! -f "$OVMF_CODE" ]]; then
+  echo "Erreur: Firmware UEFI non trouvé: $OVMF_CODE"
+  echo "Réinstaller QEMU: brew reinstall qemu"
+  exit 1
+fi
+
+# Crée un fichier VARS UEFI temporaire (copie de edk2-i386-vars.fd)
+VARS_FILE="/tmp/karmaos-efivars-$$.fd"
+cp "$QEMU_SHARE/edk2-i386-vars.fd" "$VARS_FILE" 2>/dev/null || dd if=/dev/zero of="$VARS_FILE" bs=1M count=64 2>/dev/null
+
 qemu-system-x86_64 \
   $ACCEL_OPT \
   -cpu qemu64 \
   -smp 2 \
   -m 4G \
+  -drive if=pflash,format=raw,readonly=on,file="$OVMF_CODE" \
+  -drive if=pflash,format=raw,file="$VARS_FILE" \
   -drive file="$IMG_FILE",format=raw,if=virtio \
   -netdev user,id=net0,hostfwd=tcp::2222-:22 \
   -device virtio-net-pci,netdev=net0 \
   -vga virtio \
   -display cocoa \
   -boot c
+
+# Nettoyage
+rm -f "$VARS_FILE"
