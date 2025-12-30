@@ -21,6 +21,10 @@ snaps:
     type: base
   -
     default-channel: latest/stable
+    name: core22
+    type: base
+  -
+    default-channel: latest/stable
     name: bare
     type: base
   -
@@ -58,13 +62,13 @@ snaps:
 timestamp: 2025-12-30T00:00:00Z
 sign-key-sha3-384: YHuln6rWuWDq2HhRIRSyhuQGquH-UIlRcxO27U4CkO_UjKMdMXTivrsT4eDK3oI_
 
-AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUzaBAAoJEB24BZntyftdcpAP/AgR
-l0SJivzS4eeOmAmeKfLyv5K7/NuHUd0QJ7QjM8GPpXZRZS7vlz5LrLqrJEk2TNG8mWKUnxo5jZ7L
-X3PsW+InHhUicwD/s61j6W13n2Dg0S8If1seksQ5n0d+fLKvcYwSuUJaXxEYWFicT8LphtrBTPSn
-8o6lvPgGpWr6zt3iS5gGGZKkMabH8s2F77oR58oQmcdhXloigop95XMxFXtgi7B8yoe9sCiya7h7
-gYDbBGq09EJjL+CKHqRKZJoBcO/x6SUanxZ8rFBXxUjkLpNRwAOTy8sHF3Er43Uwqf0KsHnPQae4
-+xWIbDr9vB/Rw9td5Kld8uuG9k54BExIToCi/oOmNhpKYlHhfQVUSo/kYi6HSKBhupOGVAO4Fp1M
-vg3beI7JVv1KfWzw6WuwuwuUAmKzsLmbJslaKYZYnej/2o83sfZ0smfGpMhdAS1BZ8xQy/sGAW9p
-q/138DHCJKedDxAbVYtL9gegvarg9Y4IwB4L7izRSBUROkf+jo0dvZwDAKvHv0kxIDqTKilEGqXP
-pmr/Xxyp2ZJQONhK4P6xyR3Bnk0/0l3wnLb6mpnq0ou5ve5i7m/C3G3n/5ABClh26IGCuNuYDjIT
-Th+05mzQwBOFdTXLkPUXL6EGa6iR2L5urx80KxsLdKt0kAzkR3cbYDMemQwXhvtF8LQapgiB
+AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUzfAAAoJEB24BZntyftdHNUP/RWX
+g7Nx04LPsbZBOpugNebFiu2cjf4ANs/QvzvLKVUFSLnbjjYbAmhzURoo7nMpv8ObEDDAvstrnvIO
+52GXanDuupNXVe2x3ZzXY75GS5tvQh+7BnEMsu/eNcA9R3J8TQldXaioCjpqsBOFQpLmPqGOES5b
+k4TWlY9BwgKTGI/B70xyCLr0S/YJcG2tzgG5Xl9zHHCxBt9463QHv2tuXb+ZJRJt98bdpr/IVKku
+tNRXtOQ/HdF1t2/J7p3G1AG/G686H3JynoJZtt6jjhkVpVIF42cCIA6r9ViOmBVSaCOE9c+RQzZI
+AvrSNqsbrt/ZFyIBzhZUIFDLCIBXi8Q6H1N47CxqjnnRuMlcucH7P01Zip+OrLtNwZbfO6BjrWZ0
+qyiK65Q+VVOypmfU1D7s2PE8Q6hiXU1NizkaxL0d8N2EFLrLYuOmbqqYFKjkRcieXjxSUNDBq9og
+MnVnTQb6gTduH7fl6rS3rIQI8GJuBXplHaj0cQZDEdE8oBv35qS8AKRYWSgRp1AOxPohQn5dJmvS
+iNG/tSOeQKxxLk0RDpeFckIf7GhUpptqmRcLdCbkSvWMPM5HPVIVfvrUwqlNZVgShKPavzBxgj0a
+6gjW8v4tHcqTJ6zyVts9asP6FUVLCtWVu+pT4RRdu+DY86UhBqFWG/FbAdCnHKloZ9bAND0D

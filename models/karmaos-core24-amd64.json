@@ -25,6 +25,11 @@
       "default-channel": "latest/stable"
     },
     {
+      "name": "core22",
+      "type": "base",
+      "default-channel": "latest/stable"
+    },
+    {
       "name": "bare",
       "type": "base",
       "default-channel": "latest/stable"
