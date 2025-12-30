@@ -19,10 +19,22 @@ echo "  - Connexion réseau: dhcp automatique"
 echo "  - Console: login après boot avec le compte créé"
 echo "  - Sortir: Ctrl+Alt+G pour libérer la souris, Ctrl+C dans terminal pour quitter"
 echo ""
+echo "NOTE: Sur Apple Silicon, l'émulation x86_64 sera lente (pas d'accélération)."
+echo ""
+
+# Détecte l'architecture pour ajuster l'accélération
+ARCH=$(uname -m)
+if [[ "$ARCH" == "arm64" ]]; then
+  # Apple Silicon - pas d'accélération HVF pour x86_64
+  ACCEL_OPT="-accel tcg"
+else
+  # Intel Mac - utilise HVF
+  ACCEL_OPT="-machine type=q35,accel=hvf"
+fi
 
 qemu-system-x86_64 \
-  -machine type=q35,accel=hvf \
-  -cpu host \
+  $ACCEL_OPT \
+  -cpu qemu64 \
   -smp 2 \
   -m 4G \
   -drive file="$IMG_FILE",format=raw,if=virtio \
