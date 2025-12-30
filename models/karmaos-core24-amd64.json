@@ -25,6 +25,11 @@
       "default-channel": "latest/stable"
     },
     {
+      "name": "core22",
+      "type": "base",
+      "default-channel": "latest/stable"
+    },
+    {
       "name": "snapd",
       "type": "snapd",
       "default-channel": "latest/stable"
@@ -40,7 +45,7 @@
       "default-channel": "latest/edge"
     },
     {
-      "name": "brave",
+      "name": "firefox",
       "type": "app",
       "default-channel": "latest/stable"
     },
