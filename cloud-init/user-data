@@ -1,0 +1,20 @@
+#cloud-config
+# KarmaOS default user configuration
+# Username: admin
+# Password: karmaos
+
+users:
+  - name: admin
+    gecos: KarmaOS Administrator
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users,adm,sudo
+    shell: /bin/bash
+    lock_passwd: false
+    # Password: karmaos (hashed with mkpasswd --method=SHA-512)
+    passwd: $6$rounds=4096$saltsalt$IxDD3jeSOb5eB1CX5LBsqZFVkJdido3IXAUL7QNUF1hDdQ7iyzoLdSCLGnrQ9PdQR1jIhxQQqAZ.gxQJSx3qT0
+
+hostname: karmaos
+manage_etc_hosts: true
+
+runcmd:
+  - echo "KarmaOS 26.01 - Ready!" > /etc/motd
