@@ -28,6 +28,11 @@
       "name": "snapd",
       "type": "snapd",
       "default-channel": "latest/stable"
+    },
+    {
+      "name": "console-conf",
+      "type": "app",
+      "default-channel": "latest/stable"
     }
   ]
 }

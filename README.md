@@ -25,7 +25,18 @@ Le workflow utilise `ubuntu-image` (snap) et lance [scripts/build.sh](scripts/bu
 4. Vous y trouverez `dist/karmaos-26.01-amd64.img` et `dist/SHA256SUMS`.
 ## Premier démarrage
 
-Après avoir booté KarmaOS, exécutez le script de configuration pour installer les apps recommandées :
+Après avoir booté KarmaOS, **console-conf** s'affichera pour la configuration initiale.
+
+**IMPORTANT : Créer un compte local (sans Ubuntu One)** :
+1. Dans console-conf, sélectionne **"Create first user"**
+2. Choisis **"Create a local user"** (pas Ubuntu One/SSO)
+3. Entre :
+   - Nom : `admin` (ou ce que tu veux)
+   - Mot de passe : choisis un mot de passe
+   - Email : peut être fictif (`admin@localhost`)
+4. Configure le réseau (DHCP automatique)
+
+Une fois connecté, exécute le script de configuration pour installer les apps recommandées :
 
 ```bash
 # Depuis un terminal dans KarmaOS
