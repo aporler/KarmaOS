@@ -19,6 +19,9 @@ parts:
       mkdir -p $CRAFT_PART_INSTALL
       # Copie les configs
       cp -r ${CRAFT_PART_SRC}/*.yaml ${CRAFT_PART_SRC}/*.conf $CRAFT_PART_INSTALL/ 2>/dev/null || true
+      # Cloud-init config
+      mkdir -p $CRAFT_PART_INSTALL/cloud-init
+      cp ${CRAFT_PART_SRC}/cloud.conf $CRAFT_PART_INSTALL/cloud-init/ 2>/dev/null || true
       
   pc-boot:
     plugin: nil

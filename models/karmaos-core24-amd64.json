@@ -15,11 +15,6 @@
       "default-channel": "24/stable"
     },
     {
-      "name": "core24",
-      "type": "base",
-      "default-channel": "latest/stable"
-    },
-    {
       "name": "pc-kernel",
       "type": "kernel",
       "default-channel": "24/stable"
@@ -32,11 +27,6 @@
     {
       "name": "snapd",
       "type": "snapd",
-      "default-channel": "latest/stable"
-    },
-    {
-      "name": "console-conf",
-      "type": "app",
       "default-channel": "latest/stable"
     }
   ]
