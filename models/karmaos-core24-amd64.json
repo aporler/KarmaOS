@@ -33,6 +33,16 @@
       "name": "console-conf",
       "type": "app",
       "default-channel": "latest/stable"
+    },
+    {
+      "name": "kde-frameworks-6-core24",
+      "type": "app",
+      "default-channel": "latest/stable"
+    },
+    {
+      "name": "plasma-desktop",
+      "type": "app",
+      "default-channel": "latest/stable"
     }
   ]
 }
