@@ -63,11 +63,6 @@
       "name": "gtk-common-themes",
       "type": "app",
       "default-channel": "latest/stable"
-    },
-    {
-      "name": "brave",
-      "type": "app",
-      "default-channel": "latest/stable"
     }
   ]
 }
