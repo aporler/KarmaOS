@@ -35,32 +35,16 @@ snaps:
     default-channel: latest/stable
     name: console-conf
     type: app
-  -
-    default-channel: latest/edge
-    name: plasma-desktop-session
-    type: app
-  -
-    default-channel: latest/stable
-    name: gnome-42-2204
-    type: app
-  -
-    default-channel: latest/stable
-    name: mesa-2404
-    type: app
-  -
-    default-channel: latest/stable
-    name: gtk-common-themes
-    type: app
 timestamp: 2025-12-30T00:00:00Z
 sign-key-sha3-384: YHuln6rWuWDq2HhRIRSyhuQGquH-UIlRcxO27U4CkO_UjKMdMXTivrsT4eDK3oI_
 
-AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUztOAAoJEB24BZntyftdNGQQAITu
-zs+49krMEZ+Av3+LCfDlIZ3mHd0oOcxA89dHHRpjC+eTGonfM3XtMT+9cTObHGp/QId+0B+uQkw9
-A4aPG7ZC3uKuibttUTxPMxvgFk48IX+CE5sptbMjzx4ln4KNV9COVm1Y29zd3Ne0Ot0EI2Yezty+
-zIN9UmQzniSmWbYioZaytVcQGmy2qsShqSZamsUdKrrade6kL/jAA2AXNocaNavcHT9oCMh6Fzqt
-EPCVVnPQED5CwCtSF3jLG65e8lvM9azfDyLdmZFMpqVlewK6GAYFI80562pz5Bycink6Ays16sY7
-oHPrShUepGBQQAPQ/ivMyCfbBjp4lW33LtgXfaqGZ8IofwHSFsNO9SPHNENHqeTkJqFng18H9dIU
-v018mqbUtYx1gn9EjNB1Wbn3RKxOER5xPtCQtBz8bk0QbGxdMNH9eKV9STiOq3y5JD7+yt7BpY8T
-iDPgxWVWpu+hKzbiBiEdtKNknHodL3R2ji1ciLQS8wYHAFK5KcbQtJg6kcyiqBCDNh0bt8ZLABUB
-F27ANdzIfGQpBaLrlnpvh49QpM1qh0hoYgk/BYhcStuF+5Y+hC9bX3TYioTOuz5nsWYledD/+Raz
-k5OD6PVLWoDKPC8O5ijMczyOU5JJpjBAoN2RL2/zeOxiI70QwS5PDAnQWRblMGWMya+j+x75
+AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUz/jAAoJEB24BZntyftd94sP/izX
+yVUG8TgFaSDXOtNl5gk6vtQwbOJnttm2a+IPKWSptR1rRM+zuY6Li09SpO4Ev+HWezKAdC88hkxn
+RJlXvbkbQjMsHqSah8M0FIGDaKG7yOPTVt7B6MEpFqYOD5R5K+gPGoyCt/cPAQ1BYtO7ZeG9lveW
+2p9tCGStCYn8+I4BD1h3va1jdZkTBoS2xSsXpLvEnXnjVygwIYot7uBNNqeQ6khjmCNnQSOlZhRq
+54P2kzhfjODgQR5aDLuREQFV9lfgYS8A80KysGA/16sI8xR95LBpAtt7gte7QjiptezRnrQFNnM/
+NjNHO45XXxDOL5IxrCHP4TEt76MVwL0krmAcVQiXRsJrYEpLt1n6KhvyJv1xe4fSY/kU8cxvbw+z
+aTIL7BPKbn8VuLTduZNRtQ8vZGFId96k+Bn69z9XYZ0GSujhm1R6sTzih9umeEq52G/VgbHHa0uE
+sLiRtVEssri18YnbdH09dx5T6ULDwqny8Ib/q1uGJ27GY+AmvY1ZnO0g01mKu+SI5FQuvejYlsqb
+FS/mnYP0J5vQDBBgtBGusXdbNzdpM5q4pbOFDN53zmNp50gCszC4Tu3TD9++IvBxry46GM7/5Jva
+kOGX3tOqGtX3DbLX/MNAIJm4vnUzVtY0604GQ4redpo0NLq6tEmO5oULEPAgDVOxxPYfQbXX

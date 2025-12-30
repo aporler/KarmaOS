@@ -43,26 +43,6 @@
       "name": "console-conf",
       "type": "app",
       "default-channel": "latest/stable"
-    },
-    {
-      "name": "plasma-desktop-session",
-      "type": "app",
-      "default-channel": "latest/edge"
-    },
-    {
-      "name": "gnome-42-2204",
-      "type": "app",
-      "default-channel": "latest/stable"
-    },
-    {
-      "name": "mesa-2404",
-      "type": "app",
-      "default-channel": "latest/stable"
-    },
-    {
-      "name": "gtk-common-themes",
-      "type": "app",
-      "default-channel": "latest/stable"
     }
   ]
 }
