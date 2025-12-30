@@ -45,6 +45,10 @@ snaps:
     type: app
   -
     default-channel: latest/stable
+    name: gtk-common-themes
+    type: app
+  -
+    default-channel: latest/stable
     name: firefox
     type: app
   -
@@ -66,13 +70,13 @@ snaps:
 timestamp: 2025-12-30T00:00:00Z
 sign-key-sha3-384: YHuln6rWuWDq2HhRIRSyhuQGquH-UIlRcxO27U4CkO_UjKMdMXTivrsT4eDK3oI_
 
-AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUzHeAAoJEB24BZntyftdQfQP/ish
-vLfiqG1SjuyeLsLMThGw8akpp68m5oL4ZzcAqK+3TOR8RjWNtX/6YQ1GTQp4gfdEc4Pc4h+PkIqk
-dLoPTtGgFJemaB6dNqSP53hFI/SS3V7MZL6rBBKHZZr/BWoVA3ntZ5kcCuQwq26cZjBkCdZrmXUX
-xHnzE35eIo4gjFgBy1uog5pft22bYTYCBm0bTPfCGlJI+JSaemG71ygkLlbt5cjq5+yfclXsFJz1
-7oEReemy7DV0yHIzibkAMtU/xvPbaThuEueYLXpdtG9fcEBBQhgHWdtTRAAkp/Q0Oh75H5Ix/MW1
-VaBaFreZj4miBXDeyjPw+VqqcWHATtJofqR3iqCr5fkpLvhEw9NGuUornKPxuamxKm1hI4YQ5RCo
-hpIU/4NoeUmeCJ55+zLri3Yb2Xxyr6TMZS+z7UJoeZR4aRpfJGFWZgLsfTcudBIpkJ/m4syqyp0Q
-QUmr0lP0GUkkW23q9cLUKJxubISoU9hS46cmwsi+LnFwgKbjzpTS92ILxY7yOiEO3c1uY6o2eqqU
-095EYnfpAARaPFJpT5PIeFk/cBk4vYUrJcBk8kWX/Ir7fJq/+hXMjV4M+FxB+tFq/GIP86vgbuUM
-XGBL6CKqu9dmTEkHJBhJ4FPZGvabYzHwlD/cXWSW5ovLNfWcGApe23x7zX36tl+oSp6a64xr
+AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUzMrAAoJEB24BZntyftdvnwP/jR4
+hct19AE23ixhaGdP9epduHODgPzeW4//opA6YPSmbKBkGX8D4ijSm7pWXIAnN9UM/mALSjXqe2Bq
+5bmyk2hQOcxuKCG0az/M+Xrdw1j16qvcuIGJyoRDD2VPqRIOBfvsp97J/E27vUECH5NFB93rc7WP
+J3F+bvQRR2+rF0YQiQqN5FCVvsDtNX9NVVSRpUhCKh6QeP9HZ7opICU1eYxQ+lEynAJW0IGAct3K
+HSAJkbct+/QNjexHYKxNyeMF+aUtcZk/PWslBP8ofEZOdjAM+MtgZLqN21tF2Y3Dx6udocuedBh+
+CHa4SLn/3dmnp6eKQZ4UtnOI9WSdg8Gob+IAWISX5hnk7Hk9o55XtFvOCrczuSZLjpQJ5w8fWUoM
+v41VVyURxUcIYH8nTrFAELzk0e2AsyGS1AnrzHKLfZTNOWmA4uioZ8X8iLvGLcQrnKz0C53B2p8M
+bpcWm7FqBlG2HaVMA4TpOqAxozjML9zX/HY4+AlBkPCk8jLMvrnvu5srIMnQQVuj3tdODDjmRXN7
+xo6yGS5AqU18D3zNqIJPy72OErV0FeKV/XyVNMXocOFiBzBrLYT8rmlbyelkLbxkMdU7shAseM6V
+4RbdIB9Kb5TXiwSEpB0EgJr0jXYYXiECVr7U9a/k1l9/spkncKOzQlP15wXOFMaPgsquPDur

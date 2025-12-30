@@ -55,6 +55,11 @@
       "default-channel": "latest/stable"
     },
     {
+      "name": "gtk-common-themes",
+      "type": "app",
+      "default-channel": "latest/stable"
+    },
+    {
       "name": "firefox",
       "type": "app",
       "default-channel": "latest/stable"
