@@ -50,6 +50,11 @@
       "default-channel": "latest/edge"
     },
     {
+      "name": "gnome-42-2204",
+      "type": "app",
+      "default-channel": "latest/stable"
+    },
+    {
       "name": "gnome-46-2404",
       "type": "app",
       "default-channel": "latest/stable"
