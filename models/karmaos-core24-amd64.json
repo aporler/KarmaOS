@@ -30,6 +30,11 @@
       "default-channel": "latest/stable"
     },
     {
+      "name": "core18",
+      "type": "base",
+      "default-channel": "latest/stable"
+    },
+    {
       "name": "snapd",
       "type": "snapd",
       "default-channel": "latest/stable"

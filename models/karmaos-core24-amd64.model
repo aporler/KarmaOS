@@ -25,6 +25,10 @@ snaps:
     type: base
   -
     default-channel: latest/stable
+    name: core18
+    type: base
+  -
+    default-channel: latest/stable
     name: snapd
     type: snapd
   -
@@ -55,16 +59,16 @@ snaps:
     default-channel: latest/stable
     name: snap-store
     type: app
-timestamp: 2025-12-29T23:41:30Z
+timestamp: 2025-12-30T00:30:44Z
 sign-key-sha3-384: YHuln6rWuWDq2HhRIRSyhuQGquH-UIlRcxO27U4CkO_UjKMdMXTivrsT4eDK3oI_
 
-AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUxGqAAoJEB24BZntyftdGAYQAJY3
-UibMEkNsiWb65yaRtBTiKDJAE1cvddmnvWJB/cHTHm69j9jhqdtb2VEMl6Vho/Unv2m1EtQ108s/
-Bffs0dRf/aJMa4FQ5nLla0d6a3fet5NDpt4EXlL1RW0clVL4Xmi1P8dwHIzbjunYE1B9uD76ySqu
-l+LfyLUUSc42UpqZPD8gZhBVqWh5rWJeqRy6CQOXMjYS3Ti0hk45UWrGCUtDxt4QqTw7AlYy39LF
-r1FczrkxwDTpv2T6xtr6eUqxb/8P38AxO5ADjYw4W1wQWBsmq1Ob5WS5dc6vRLI7LTn6AGfuiupd
-Ytafmw8lSJoJjwAooTaZttvihreo+VGdvEsWzVCSa74XIMmEC8XaFj+ASpT4/2D4QktPZyilJl+a
-pe+O44Q7a//k5Gd2lF2FP6C/lRXEqncgeZtkAG4mz/mYWxEi+rUDMS5Hu6Yvzjz7Q8GxUSGqSNpN
-yQ2kouCvC7t2YU+9Lj/e0KpauUB2zMsLkAYjnIHGPEkVqXzhtUiGfCze9gqSAcPX7VB9G87SZroF
-Tjg9UrbJbmcskHuK/XqfYLyKLoEfqSdvxRLq56Km5qgpiMTS0a79dZOPV7nyNfihkx+pceD8E6x9
-fRbqluhLKTBzYpyTmB7sMXZgDTXFdRl3nx05e7oedYIop5420c5U4wWV8qzLUIJK949M+P7x
+AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUx00AAoJEB24BZntyftdgWAP/1l7
+1MuVi1W82LDL36uNq/penaWUFeoOA4VBdCIhFXiLkPawE92o8JnQ8JHi6lu0vVYFth/6FGp712/v
+aeIBiz3s/bG9c2E59qHTTtT693EuroRHjBhzkSixDX/1EDYMZxZi7X9t0YnZBAVXjr6k0oKXoVKF
+rXBawCjGuKJQJqhzLg3yrAN57papx386uzkZBo0/7ufanT4y6IUitx2s/IwCV6sbkFSoIzQ3YHQ7
+o2G5xQG8f7KWYcEY8iv0rYIjexBzm/7iLX0eQt0pEC0PBUDr/TqFQSEfJRn2Ecv9nQBCFanqKLYh
+Hf40sNxxeY29BDM4IpbC7nd3hpZw1/TH3F0bs4Fg1exxN6s5c84+XBF40pO73WBVh6MUg5ducyXU
+82UbVrmAFx22GlXI7icGfy+lwlV7G/4bbdlDYUaIwCWq/GUVqnkAQcv+DiIivSTs1iXuW530w/6/
+wOJ2QmLPbKnlwhFZbWX3MLkg5DGOfaV4AbrBfrklm1igwsVLwPXs+Qm1NkGgTfIAOsR319XQfOdC
+BiHMI2p3WYA5nrHMeqfeEq4lw1Uq1bhC1Op2u01mi17KreZAMTf6yJI2vD5d8qez94guQKmJM/sm
+CXsH+6P+MK6QFhglIRGkezjkJN02KDj6qqfFAjztamtQZiH0lPEJ7Pvpu83IH0sN6cM+Oove
