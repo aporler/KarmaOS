@@ -16,6 +16,7 @@ jobs:
       - name: Install ubuntu-image
         run: |
           sudo snap install ubuntu-image --classic
+          sudo snap install snapcraft --classic
 
       - name: Build image
         env:
