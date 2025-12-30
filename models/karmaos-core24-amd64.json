@@ -25,16 +25,6 @@
       "default-channel": "latest/stable"
     },
     {
-      "name": "core22",
-      "type": "base",
-      "default-channel": "latest/stable"
-    },
-    {
-      "name": "core18",
-      "type": "base",
-      "default-channel": "latest/stable"
-    },
-    {
       "name": "bare",
       "type": "base",
       "default-channel": "latest/stable"
@@ -55,11 +45,6 @@
       "default-channel": "latest/edge"
     },
     {
-      "name": "gnome-42-2204",
-      "type": "app",
-      "default-channel": "latest/stable"
-    },
-    {
       "name": "gnome-46-2404",
       "type": "app",
       "default-channel": "latest/stable"
@@ -76,21 +61,6 @@
     },
     {
       "name": "firefox",
-      "type": "app",
-      "default-channel": "latest/stable"
-    },
-    {
-      "name": "libreoffice",
-      "type": "app",
-      "default-channel": "latest/stable"
-    },
-    {
-      "name": "thunderbird",
-      "type": "app",
-      "default-channel": "latest/stable"
-    },
-    {
-      "name": "vlc",
       "type": "app",
       "default-channel": "latest/stable"
     },
