@@ -16,26 +16,7 @@ grade: devel
 confinement: strict
 
 apps:
-  daemon:
-    command: bin/karmaos-welcome-daemon.sh
-    daemon: simple
-    restart-condition: on-failure
-    plugs:
-      - network
-      - network-bind
-      - network-control
-      - snapd-control
-      - system-observe
-      - hardware-observe
-      - wayland
-      - x11
-      - desktop
-      - desktop-legacy
-      - home
-    slots:
-      - dbus-daemon
-
-  setup:
+  karmaos-welcome:
     command: bin/karmaos-welcome-gui.py
     plugs:
       - network
