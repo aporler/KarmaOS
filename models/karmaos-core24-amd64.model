@@ -53,6 +53,10 @@ snaps:
     type: app
   -
     default-channel: latest/stable
+    name: mesa-2404
+    type: app
+  -
+    default-channel: latest/stable
     name: gtk-common-themes
     type: app
   -
@@ -78,13 +82,13 @@ snaps:
 timestamp: 2025-12-30T00:00:00Z
 sign-key-sha3-384: YHuln6rWuWDq2HhRIRSyhuQGquH-UIlRcxO27U4CkO_UjKMdMXTivrsT4eDK3oI_
 
-AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUzTuAAoJEB24BZntyftdBIAP/iTN
-poUM0kbykcN9CjLZiZgut24p6o100bX8fX9aJVRu8K2bWQfmEjl02o/hRsoQhdDVT8VXCRiyNoRr
-Bu/N+Gb1NLE6H+Duc6KgFh8VXVwCdq8vUVL+9H7EWUsGrMaCXgyZLYS37bX9KfWe9g85MbSJ2zGN
-NdUiAqyzE+E4ewyIlpMCf2KbFjH9oALCaHDVvdIFeifnASIjr4hF7Hthn8F/D4rr8rBdvLfSDuv1
-dbp05qxke7vrn89dxwsODEiQjBbTVpH+riS4cMCZgP7EoH06yEq4mimigh8rLLnXhxS/CfL1T311
-lgQ6TGjGloqieoIgiqjn121WoAfG92mNu3zcLq6xQFLHLXVlgGoPy8sQCUY5bTCydfd+yfLqJRAl
-ydRlA5e2T9cXDyrDBQGrujdlYufQyEumB5QZvOj6FbJ1oKWn3HICf612nIv15mg5YsqkYoZtRnyN
-KuUU/uLPcETzW/ah4X04E0mW7KcLJUYxZWmXIZMrG1kjUrXgmPsSjQXarCfY2xHLSNJaJg0QZ12X
-3PV3iqiuDbFWKiAZCDgzu03QHiHUcQSkbyMRP1xUHwnUi2GZAdPdmOeVAZAwpA5rQRDvFIlG2NUO
-7Jpy8Ynea4xKq8xuyWK1MKnaiEYfZ4AVi98VlaK72Gza2iQiFhClDmgvVmx2evaq1tR2abSI
+AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUzWmAAoJEB24BZntyftd5OYP/iJP
+QZHztlnl+vpxMqYiUCptxw4wyt10NLvbsFR7Rtma568lrvmupMH5Us7lvEzvYTROZObpgAPeSgmk
+7gbi+jRdaZ9ToWY8hQ2l623FpHyttGbAcVu+imzAUP8LK5YkGEy1D4OY3deQaJPAgjnU07sYjpBD
+/SZAbFkfuV8BqhhI45fq8lbrsvEz7Ez4EX/khu9LsphiTfi/wb+exlbZ+ZK3F9fudN2jrRX4AbRG
+fYBQ8bN8HSNUiTwc0LdVYG7yALWGcipZD4ebWG6TUZeDQMEt0u7pqokRSbLw/fi8aHpYcra2l/fp
+iOfsugk58JJ368i8ptdPnQuRdNy8sdwnSRDIC7w+3hKpQdsZTESea8pKFWLimEAOOedp183aLaGy
+iEqBNIRmX+dagg/E/JSdMziIspLOqO1hGOO702TqUinEfd9GjGNEYIuXUPHPQ0O98zmNowACz4dC
+NSdYZ54O+eEiKjpKjPDlJUS7IdQr8cMCV6w0vA0e65gOgu2PuAN7RLcc+UGYhIgM5J4twEmMXkoc
+LAsQdxsG469XZZhanWfPRTiZd5n8V+fVsPIQkrgNJdQQRRq8IdxJAbmgKNb5AZIFQuJ/MXpQeO09
+mEPC436qPr79oeFmJuaq7l9hxBCLBtf5/y1dZ1b5loYo5OPbrWa7zAtp8UFju6tCJxlAcmhv

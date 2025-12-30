@@ -65,6 +65,11 @@
       "default-channel": "latest/stable"
     },
     {
+      "name": "mesa-2404",
+      "type": "app",
+      "default-channel": "latest/stable"
+    },
+    {
       "name": "gtk-common-themes",
       "type": "app",
       "default-channel": "latest/stable"
