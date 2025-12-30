@@ -65,7 +65,7 @@
       "default-channel": "latest/stable"
     },
     {
-      "name": "firefox",
+      "name": "brave",
       "type": "app",
       "default-channel": "latest/stable"
     },
