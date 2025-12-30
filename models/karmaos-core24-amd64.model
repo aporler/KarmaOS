@@ -45,10 +45,6 @@ snaps:
     type: app
   -
     default-channel: latest/stable
-    name: gnome-46-2404
-    type: app
-  -
-    default-channel: latest/stable
     name: mesa-2404
     type: app
   -
@@ -59,20 +55,16 @@ snaps:
     default-channel: latest/stable
     name: brave
     type: app
-  -
-    default-channel: latest/stable
-    name: snap-store
-    type: app
 timestamp: 2025-12-30T00:00:00Z
 sign-key-sha3-384: YHuln6rWuWDq2HhRIRSyhuQGquH-UIlRcxO27U4CkO_UjKMdMXTivrsT4eDK3oI_
 
-AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUzltAAoJEB24BZntyftdphQP/idm
-WvXoXiQtmmqdwG+Y4s6SnDveNo1ht6c1Es0skQDjai8fAivocrWhxwPDJomhZBbNN8e6IgSBjn1Z
-Q3I7ooxoItr3tQjQvX29o1pKgiLzXrjkJZXw7JwwuPp5Pr+qmtYsjXmDmRcEbSGSErka75kN87dp
-yO5OB9Rj/mFcA5ggct1ckJDdyhdtfOnOI5gikTPq60rWY4kqekNUxiJ7/a5vUrWOH06ne5fX9Vpy
-lSIgPDLTon/PesRmtlh72J9K6xqfh7cZSfA01a0jPdd5MoGf3GONfCM5oNv+Hz9lpsMjQGfKH5Rn
-KK/ECidEqleqpfjCNLMt0puS66LBNV4Ck/lSQ++F8c+9u58cBC6esMQ94QNROE75nT7GWlIWouXt
-pR391fEJ09zv1GcXhWCUBSYk1dTH9j3s0NDkwNCAcYFsZdqc+QrkPJUfWB1zDrCjXCJw3snCSmvB
-NZ6Ane1Kurq3l3TPkG3cPin0jsiurJquJYTYY8sNVFtSyqDX0bQAs/ubQMSz87LMKgV8IO120bCB
-n+G/g5xYpymit7NyW2EqbH9hXPTMqghiIHS7/SDs22z8tM06L/X+p2pC34ZxMVsyHrCLfvxtRa7t
-3WjTv7cKyahPPlqAl60vQzSkNx+hE5HpccFZP95PQcSWcTMHIFukKdMQmB93cxRB7vtbJk5T
+AcLBcwQAAQoAHRYhBOJR8l/sm3m33Ya1YR24BZntyftdBQJpUzo9AAoJEB24BZntyftd+SYP/ipt
+ZFXllqTW1mf7oiS4ARvzff7OrrjDS3+L/tmYFwMaOYgBRMzbXXpDzeRlTrUaqfLiYITDExlMbS+I
+72zk3Ncgf1nJY5LN3KqhtOGS5ikoK5ydoYw51QpA0pYitecKtkLc1ZypACPIIOqQIGNhCfAsDI57
+HgKQ0azZxh1Lb+rGMnIGrlosfKAiSbwI3bvk0c30OJQhOUEy4+c9lH6oTHjvcsCwMfqZh6dCqLYU
+ZrW92hGt51fAF4RzTgngB5M2EQuSXBwOoctdnlS7XQAlJKaOb9cNZbTjuFbRQGQ6/pkOJY+eoSsL
+Wjto9J3RgRFj48r+oLGDXV3xCbya50KvdwMivPnXJJh+QTVj1/ZV6YwJ0PPHK2N72PsDJN1Q2nRM
+JDrx5SwnxC/ZAWJb8DJoOYaES3Ob0oiqqOYShRz6tHH9qYgGShvuhG53PjoIIiucNanNNNImhe34
+QmqF8rv5r5zgGlDf+y9cPkW3yqr8Hkva9ZMtoXwaRR1K4BxUl1Z5AbpXm7B2EUWBgUtrHHw+V6lz
+CoLmbgk9o9fadVVUFWYFlrd5MWqfS+aqA3MloKbHhDqfgX22R+3SA+6cm6KpIxZ0/r9kYQkBLSs3
+rjektqdx7h0/pfgFm68FdMYhZIw+ED9e83dPk8Pzv6gXDs05iHIsEubXiqZi5RzTZHvP2HS3

@@ -55,11 +55,6 @@
       "default-channel": "latest/stable"
     },
     {
-      "name": "gnome-46-2404",
-      "type": "app",
-      "default-channel": "latest/stable"
-    },
-    {
       "name": "mesa-2404",
       "type": "app",
       "default-channel": "latest/stable"
@@ -71,11 +66,6 @@
     },
     {
       "name": "brave",
-      "type": "app",
-      "default-channel": "latest/stable"
-    },
-    {
-      "name": "snap-store",
       "type": "app",
       "default-channel": "latest/stable"
     }
