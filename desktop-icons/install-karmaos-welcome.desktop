@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Install KarmaOS Welcome
+Comment=Install and run KarmaOS Welcome setup wizard
+Exec=sh -c 'snap install karmaos-welcome --dangerous --classic 2>&1 | zenity --progress --pulsate --auto-close --title="Installing KarmaOS Welcome"; snap run karmaos-welcome'
+Icon=system-software-install
+Terminal=false
+Categories=System;Settings;
