@@ -1,0 +1,76 @@
+name: karmaos-welcome
+base: core24
+version: '26.01'
+summary: KarmaOS graphical welcome and setup wizard
+description: |
+  KarmaOS Welcome is a beautiful graphical setup wizard that runs on first boot.
+  It guides users through:
+  - Network configuration
+  - User account creation
+  - Application selection and installation
+  - System configuration
+  
+  After setup completes, it automatically removes itself to save space.
+
+grade: dangerous
+confinement: strict
+
+apps:
+  daemon:
+    command: bin/karmaos-welcome-daemon
+    daemon: simple
+    restart-condition: on-failure
+    plugs:
+      - network
+      - network-bind
+      - network-control
+      - snapd-control
+      - system-observe
+      - hardware-observe
+      - wayland
+      - x11
+      - desktop
+      - desktop-legacy
+      - home
+    slots:
+      - dbus-daemon
+
+  setup:
+    command: bin/karmaos-welcome-gui
+    plugs:
+      - network
+      - network-bind
+      - network-control
+      - snapd-control
+      - wayland
+      - x11
+      - desktop
+      - desktop-legacy
+      - home
+
+slots:
+  dbus-daemon:
+    interface: dbus
+    bus: session
+    name: org.karmaos.Welcome
+
+plugs:
+  snapd-control:
+    interface: snapd-control
+
+parts:
+  karmaos-welcome:
+    plugin: python
+    source: src/
+    stage-packages:
+      - python3-gi
+      - python3-dbus
+      - gir1.2-gtk-3.0
+      - gir1.2-vte-2.91
+      - network-manager
+      - wpasupplicant
+    override-build: |
+      craftctl default
+      # Copy assets
+      mkdir -p $CRAFT_PART_INSTALL/share/karmaos
+      cp -r ${CRAFT_PART_SRC}/../assets/* $CRAFT_PART_INSTALL/share/karmaos/ || true
