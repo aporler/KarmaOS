@@ -40,7 +40,9 @@ lb config \
     --iso-preparer "KarmaOS Team" \
     --iso-publisher "https://github.com/aporler/KarmaOS" \
     --iso-volume "KarmaOS ${VERSION}" \
-    --memtest none
+    --memtest none \
+    --binary-images iso-hybrid \
+    --bootloaders grub-efi
 
 # Create package list
 mkdir -p config/package-lists
