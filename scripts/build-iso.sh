@@ -337,10 +337,16 @@ echo "==> Creating bootable hybrid ISO..."
 
 FINAL_ISO="${OUTPUT_DIR}/karmaos-${VERSION}-${ARCH}.iso"
 
+echo "==> Fixing ISO tree permissions for xorriso..."
+sudo chown -R "$(id -u):$(id -g)" "${ISO_DIR}"
+sudo chmod -R a+rX "${ISO_DIR}"
+
+VOLID="KARMAOS_${VERSION//./_}"
+
 xorriso -as mkisofs \
     -iso-level 3 \
     -full-iso9660-filenames \
-    -volid "KarmaOS_${VERSION}" \
+    -volid "${VOLID}" \
     -output "${FINAL_ISO}" \
     -eltorito-boot isolinux/isolinux.bin \
         -no-emul-boot \
