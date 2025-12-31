@@ -41,8 +41,11 @@ lb config \
     --iso-publisher "https://github.com/aporler/KarmaOS" \
     --iso-volume "KarmaOS ${VERSION}" \
     --memtest none \
-    --bootloaders "grub-efi grub-pc" \
     --binary-images iso-hybrid
+
+# Force hybrid bootloader (UEFI + BIOS)
+echo "LB_BOOTLOADER=grub-efi" > config/binary
+echo "LB_GRUB_SPLASH=none" >> config/binary
 
 # Create package list
 mkdir -p config/package-lists
@@ -74,10 +77,11 @@ network-manager
 wpasupplicant
 linux-firmware
 
-# Bootloader (critical for UEFI boot)
+# Bootloader (critical for UEFI + BIOS boot)
 grub-efi-amd64
 grub-efi-amd64-bin
 grub-efi-amd64-signed
+grub-pc-bin
 shim-signed
 
 # System Tools
