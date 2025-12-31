@@ -115,15 +115,6 @@ fi
 
 require_cmd ubuntu-image
 
-# Build custom gadget
-GADGET_DIR="$ROOT_DIR/gadget"
-GADGET_SNAP="$OUT_DIR/karmaos-pc_26.01_amd64.snap"
-
-if [[ -d "$GADGET_DIR" ]]; then
-  echo "==> Building custom KarmaOS gadget"
-  (cd "$GADGET_DIR" && snapcraft pack --destructive-mode --output "$GADGET_SNAP")
-fi
-
 SUDO=""
 if [[ "$(id -u)" -ne 0 ]] && command -v sudo >/dev/null 2>&1; then
   SUDO="sudo"
@@ -136,16 +127,7 @@ rm -f "$OUT_DIR"/*.img || true
 echo "==> Build KarmaOS ${MARKETING_VERSION} (Ubuntu Core ${ARCH}) image"
 echo "    Model: $MODEL_TO_USE"
 
-# Options pour ubuntu-image
-UBUNTU_IMAGE_OPTS=("--output-dir" "$OUT_DIR")
-
-# Ajouter le gadget local s'il existe
-if [[ -f "$GADGET_SNAP" ]]; then
-  echo "    Using custom gadget: $GADGET_SNAP"
-  UBUNTU_IMAGE_OPTS+=("--snap" "$GADGET_SNAP")
-fi
-
-$SUDO ubuntu-image snap "$MODEL_TO_USE" "${UBUNTU_IMAGE_OPTS[@]}"
+$SUDO ubuntu-image snap "$MODEL_TO_USE" --output-dir "$OUT_DIR"
 
 IMG_PATH="$(find "$OUT_DIR" -maxdepth 3 -type f -name '*.img' | head -n 1 || true)"
 if [[ -z "$IMG_PATH" ]]; then
