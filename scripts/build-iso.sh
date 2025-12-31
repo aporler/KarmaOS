@@ -97,10 +97,14 @@ apt-get install -y --no-install-recommends \
     linux-image-generic \
     linux-firmware \
     casper \
-    lupin-casper \
     discover \
     laptop-detect \
     os-prober
+
+# Optional: present on some older releases, not on Ubuntu 24.04
+if apt-cache show lupin-casper >/dev/null 2>&1; then
+    apt-get install -y --no-install-recommends lupin-casper
+fi
 
 # Force initramfs regen to ensure casper hooks are present
 update-initramfs -u || true
