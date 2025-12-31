@@ -288,7 +288,7 @@ EOF
 
 # Create EFI boot image
 echo "==> Creating EFI boot image..."
-mkdir -p "${ISO_DIR}/EFI/boot"
+mkdir -p "${ISO_DIR}/EFI/BOOT" "${ISO_DIR}/EFI/ubuntu"
 
 # Create FAT image for EFI
 dd if=/dev/zero of="${ISO_DIR}/boot/grub/efi.img" bs=1M count=10
@@ -297,16 +297,16 @@ mkfs.vfat "${ISO_DIR}/boot/grub/efi.img"
 # Mount and setup EFI image
 MOUNT_EFI=$(mktemp -d)
 sudo mount "${ISO_DIR}/boot/grub/efi.img" "${MOUNT_EFI}"
-sudo mkdir -p "${MOUNT_EFI}/EFI/boot"
+sudo mkdir -p "${MOUNT_EFI}/EFI/BOOT" "${MOUNT_EFI}/EFI/ubuntu"
 
 # Copy EFI bootloader
 if [ -f /usr/lib/shim/shimx64.efi.signed ]; then
-    sudo cp /usr/lib/shim/shimx64.efi.signed "${MOUNT_EFI}/EFI/boot/bootx64.efi"
-    sudo cp /usr/lib/grub/x86_64-efi-signed/grubx64.efi.signed "${MOUNT_EFI}/EFI/boot/grubx64.efi"
+    sudo cp /usr/lib/shim/shimx64.efi.signed "${MOUNT_EFI}/EFI/BOOT/BOOTX64.EFI"
+    sudo cp /usr/lib/grub/x86_64-efi-signed/grubx64.efi.signed "${MOUNT_EFI}/EFI/BOOT/GRUBX64.EFI"
 else
     # Fallback: create GRUB EFI directly
-    sudo grub-mkimage -o "${MOUNT_EFI}/EFI/boot/bootx64.efi" \
-        -p /boot/grub -O x86_64-efi \
+    sudo grub-mkimage -o "${MOUNT_EFI}/EFI/BOOT/BOOTX64.EFI" \
+        -p /EFI/BOOT -O x86_64-efi \
         fat iso9660 part_gpt part_msdos normal boot linux loopback chain \
         efifwsetup efi_gop efi_uga ls search search_label search_fs_uuid \
         search_fs_file gfxterm gfxterm_background gfxterm_menu test all_video \
@@ -317,18 +317,23 @@ fi
 sudo mkdir -p "${MOUNT_EFI}/boot/grub"
 sudo cp "${ISO_DIR}/boot/grub/grub.cfg" "${MOUNT_EFI}/boot/grub/"
 
+# Also place grub.cfg at common UEFI locations
+sudo cp "${ISO_DIR}/boot/grub/grub.cfg" "${MOUNT_EFI}/EFI/BOOT/grub.cfg"
+sudo cp "${ISO_DIR}/boot/grub/grub.cfg" "${MOUNT_EFI}/EFI/ubuntu/grub.cfg"
+
 sudo umount "${MOUNT_EFI}"
 rmdir "${MOUNT_EFI}"
 
 # Also copy to EFI/boot for direct boot
-sudo cp /usr/lib/grub/x86_64-efi-signed/grubx64.efi.signed "${ISO_DIR}/EFI/boot/grubx64.efi" 2>/dev/null || true
+sudo cp /usr/lib/grub/x86_64-efi-signed/grubx64.efi.signed "${ISO_DIR}/EFI/BOOT/GRUBX64.EFI" 2>/dev/null || true
 if [ -f /usr/lib/shim/shimx64.efi.signed ]; then
-    sudo cp /usr/lib/shim/shimx64.efi.signed "${ISO_DIR}/EFI/boot/bootx64.efi"
+    sudo cp /usr/lib/shim/shimx64.efi.signed "${ISO_DIR}/EFI/BOOT/BOOTX64.EFI"
 fi
 
 # Also provide grub.cfg at EFI/boot for some UEFI implementations
-sudo mkdir -p "${ISO_DIR}/EFI/boot"
-sudo cp "${ISO_DIR}/boot/grub/grub.cfg" "${ISO_DIR}/EFI/boot/grub.cfg" || true
+sudo mkdir -p "${ISO_DIR}/EFI/BOOT" "${ISO_DIR}/EFI/ubuntu"
+sudo cp "${ISO_DIR}/boot/grub/grub.cfg" "${ISO_DIR}/EFI/BOOT/grub.cfg" || true
+sudo cp "${ISO_DIR}/boot/grub/grub.cfg" "${ISO_DIR}/EFI/ubuntu/grub.cfg" || true
 
 # ============================================
 # STEP 7: Create bootable ISO
