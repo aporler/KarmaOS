@@ -57,6 +57,8 @@ sudo mount --bind /dev/pts "${CHROOT_DIR}/dev/pts"
 sudo mount --bind /proc "${CHROOT_DIR}/proc"
 sudo mount --bind /sys "${CHROOT_DIR}/sys"
 sudo mount --bind /run "${CHROOT_DIR}/run" || true
+# Ensure chroot has a real resolv.conf (avoid symlinks resolving to host)
+sudo rm -f "${CHROOT_DIR}/etc/resolv.conf"
 sudo cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf"
 
 # Configure APT sources
