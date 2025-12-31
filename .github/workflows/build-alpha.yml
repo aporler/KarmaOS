@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y live-build debootstrap
+          sudo apt-get install -y live-build debootstrap syslinux-utils xorriso
 
       - name: Build KarmaOS ISO
         run: bash scripts/build-iso.sh
