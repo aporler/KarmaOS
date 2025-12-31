@@ -41,9 +41,11 @@ lb config \
     --iso-publisher "https://github.com/aporler/KarmaOS" \
     --iso-volume "KarmaOS ${VERSION}" \
     --memtest none \
-    --binary-images iso-hybrid
+    --binary-images iso-hybrid \
+    --system live
 
 # Force GRUB-EFI and disable syslinux
+mkdir -p config/includes.binary/isolinux
 echo "LB_BOOTLOADER=\"grub-efi\"" >> config/binary
 echo "LB_SYSLINUX_THEME=\"\"" >> config/binary
 
