@@ -64,21 +64,17 @@ gwenview
 okular
 
 # Office Suite
-libreoffice-kde
-libreoffice-writer
-libreoffice-calc
-libreoffice-impress
+libreoffice
+libreoffice-plasma
 
 # Network & Drivers
 network-manager
 wpasupplicant
 linux-firmware
-firmware-linux-nonfree
 
 # System Tools
 systemsettings
 partitionmanager
-gdebi-kde
 
 # Utilities
 vim
