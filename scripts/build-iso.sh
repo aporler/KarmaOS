@@ -148,28 +148,27 @@ chmod +x config/hooks/live/0010-karmaos-branding.hook.chroot
 echo "==> Building ISO (this may take 15-30 minutes)..."
 sudo lb build || true
 
-# Find the ISO file (ignore isohybrid errors)
-if [ ! -f *.iso ]; then
+# Find and copy ISO immediately (before cleanup removes it)
+ISO_FILE=$(find . -name "*.iso" -type f 2>/dev/null | head -n 1)
+if [ -z "$ISO_FILE" ]; then
     echo "ERROR: No ISO file found after build"
+    find . -name "*.iso" -o -name "binary*" 2>/dev/null || true
     ls -la
     exit 1
 fi
 
-# Move ISO to output directory
-if [ -f *.iso ]; then
-    ISO_FILE=$(ls *.iso | head -n 1)
-    FINAL_ISO="${OUTPUT_DIR}/karmaos-${VERSION}-${ARCH}.iso"
-    mv "${ISO_FILE}" "${FINAL_ISO}"
-    
-    # Generate checksum
-    cd "${OUTPUT_DIR}"
-    sha256sum "$(basename ${FINAL_ISO})" > SHA256SUMS
-    
-    echo "==> Build complete!"
-    echo "    ISO: ${FINAL_ISO}"
-    echo "    Size: $(du -h ${FINAL_ISO} | cut -f1)"
-    echo "    SHA256: SHA256SUMS"
-else
-    echo "ERROR: ISO build failed - no .iso file found"
-    exit 1
-fi
+echo "Found ISO: $ISO_FILE"
+
+# Move ISO to output directory immediately
+FINAL_ISO="${OUTPUT_DIR}/karmaos-${VERSION}-${ARCH}.iso"
+sudo cp "${ISO_FILE}" "${FINAL_ISO}"
+sudo chown $(whoami):$(whoami) "${FINAL_ISO}"
+
+# Generate checksum
+cd "${OUTPUT_DIR}"
+sha256sum "$(basename ${FINAL_ISO})" > SHA256SUMS
+
+echo "==> Build complete!"
+echo "    ISO: ${FINAL_ISO}"
+echo "    Size: $(du -h ${FINAL_ISO} | cut -f1)"
+echo "    SHA256: SHA256SUMS"
