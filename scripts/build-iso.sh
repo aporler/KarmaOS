@@ -46,6 +46,10 @@ lb config \
 # Create package list
 mkdir -p config/package-lists
 
+# Disable syslinux (not available in Ubuntu 24.04)
+mkdir -p config/binary_syslinux
+echo "" > config/binary_syslinux/.empty
+
 cat > config/package-lists/karmaos.list.chroot <<EOF
 # KarmaOS Base System Packages
 
@@ -95,6 +99,16 @@ EOF
 
 # Install hooks for customization
 mkdir -p config/hooks/live
+mkdir -p config/hooks/normal
+
+# Disable syslinux installation
+cat > config/hooks/normal/9999-disable-syslinux.hook.binary <<'HOOK'
+#!/bin/bash
+# Prevent syslinux installation errors
+exit 0
+HOOK
+
+chmod +x config/hooks/normal/9999-disable-syslinux.hook.binary
 
 cat > config/hooks/live/0010-karmaos-branding.hook.chroot <<'HOOK'
 #!/bin/bash
