@@ -146,7 +146,15 @@ HOOK
 chmod +x config/hooks/live/0010-karmaos-branding.hook.chroot
 
 echo "==> Building ISO (this may take 15-30 minutes)..."
-sudo lb build
+sudo lb build || {
+    # If build fails on isohybrid but ISO exists, continue
+    if [ -f binary*.iso ]; then
+        echo "WARNING: Build had errors but ISO was created"
+    else
+        echo "ERROR: Build failed and no ISO found"
+        exit 1
+    fi
+}
 
 # Move ISO to output directory
 if [ -f *.iso ]; then
