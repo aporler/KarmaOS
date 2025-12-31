@@ -1,4 +1,4 @@
-name: Build KarmaOS 26.01 alpha
+name: Build KarmaOS 26.01 ISO
 
 on:
   push:
@@ -7,26 +7,37 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-iso:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install ubuntu-image
+      - name: Free up disk space
         run: |
-          sudo snap install ubuntu-image --classic
-          sudo snap install snapcraft --classic
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/share/boost
+          sudo apt-get clean
+          df -h
 
-      - name: Build image
-        env:
-          KARMAOS_SNAP_EXPORT_KEY_B64: ${{ secrets.KARMAOS_SNAP_EXPORT_KEY_B64 }}
-          KARMAOS_SNAP_KEY_NAME: karmaos
-        run: bash scripts/build.sh
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y live-build debootstrap
 
-      - name: Upload image artifact
+      - name: Build KarmaOS ISO
+        run: bash scripts/build-iso.sh
+
+      - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
-          name: karmaos-26.01-amd64
-          path: dist/karmaos-26.01-amd64.img
+          name: karmaos-26.01-amd64-iso
+          path: dist/karmaos-26.01-amd64.iso
           if-no-files-found: error
+
+      - name: Upload checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksums
+          path: dist/SHA256SUMS
