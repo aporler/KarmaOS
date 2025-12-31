@@ -34,27 +34,18 @@ lb config \
     --archive-areas "main restricted universe multiverse" \
     --linux-flavours generic \
     --architectures "${ARCH}" \
-    --bootappend-live "boot=live quiet splash" \
+    --bootappend-live "boot=casper quiet splash" \
     --debian-installer false \
     --iso-application "KarmaOS" \
     --iso-preparer "KarmaOS Team" \
     --iso-publisher "https://github.com/aporler/KarmaOS" \
     --iso-volume "KarmaOS ${VERSION}" \
     --memtest none \
-    --binary-images iso-hybrid \
-    --system live
-
-# Force GRUB-EFI and disable syslinux
-mkdir -p config/includes.binary/isolinux
-echo "LB_BOOTLOADER=\"grub-efi\"" >> config/binary
-echo "LB_SYSLINUX_THEME=\"\"" >> config/binary
+    --bootloaders "grub-efi grub-pc" \
+    --binary-images iso-hybrid
 
 # Create package list
 mkdir -p config/package-lists
-
-# Disable syslinux (not available in Ubuntu 24.04)
-mkdir -p config/binary_syslinux
-echo "" > config/binary_syslinux/.empty
 
 cat > config/package-lists/karmaos.list.chroot <<EOF
 # KarmaOS Base System Packages
