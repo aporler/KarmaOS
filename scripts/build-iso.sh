@@ -146,20 +146,23 @@ HOOK
 chmod +x config/hooks/live/0010-karmaos-branding.hook.chroot
 
 echo "==> Building ISO (this may take 15-30 minutes)..."
-sudo lb build || true
+sudo lb build 2>&1 | tee build.log || true
 
-# Find and copy ISO immediately (before cleanup removes it)
-ISO_FILE=$(find . -name "*.iso" -type f 2>/dev/null | head -n 1)
+# ISO is created in build directory with pattern live-image*.iso
+cd "${BUILD_DIR}"
+ISO_FILE=$(ls live-image*.iso 2>/dev/null | head -n 1 || ls *.iso 2>/dev/null | head -n 1 || find . -maxdepth 2 -name "*.iso" -type f 2>/dev/null | head -n 1)
+
 if [ -z "$ISO_FILE" ]; then
     echo "ERROR: No ISO file found after build"
-    find . -name "*.iso" -o -name "binary*" 2>/dev/null || true
+    echo "Searching for ISO files..."
+    find . -name "*.iso" 2>/dev/null || true
     ls -la
     exit 1
 fi
 
 echo "Found ISO: $ISO_FILE"
 
-# Move ISO to output directory immediately
+# Copy ISO to output directory immediately
 FINAL_ISO="${OUTPUT_DIR}/karmaos-${VERSION}-${ARCH}.iso"
 sudo cp "${ISO_FILE}" "${FINAL_ISO}"
 sudo chown $(whoami):$(whoami) "${FINAL_ISO}"
