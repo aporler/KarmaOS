@@ -43,6 +43,10 @@ lb config \
     --memtest none \
     --binary-images iso-hybrid
 
+# Force GRUB-EFI and disable syslinux
+echo "LB_BOOTLOADER=\"grub-efi\"" >> config/binary
+echo "LB_SYSLINUX_THEME=\"\"" >> config/binary
+
 # Create package list
 mkdir -p config/package-lists
 
