@@ -56,6 +56,8 @@ sudo mount --bind /dev "${CHROOT_DIR}/dev"
 sudo mount --bind /dev/pts "${CHROOT_DIR}/dev/pts"
 sudo mount --bind /proc "${CHROOT_DIR}/proc"
 sudo mount --bind /sys "${CHROOT_DIR}/sys"
+sudo mount --bind /run "${CHROOT_DIR}/run" || true
+sudo cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf"
 
 # Configure APT sources
 sudo tee "${CHROOT_DIR}/etc/apt/sources.list" > /dev/null <<EOF
@@ -82,14 +84,15 @@ EOF
 # ============================================
 echo "==> Installing packages (this takes 10-20 minutes)..."
 
-sudo chroot "${CHROOT_DIR}" /bin/bash -c "
+sudo chroot "${CHROOT_DIR}" /bin/bash -euxo pipefail -c '
 export DEBIAN_FRONTEND=noninteractive
+
+echo "==> Initial apt update"
 apt-get update
 
 # Install kernel and essential packages first
-apt-get install -y \
+apt-get install -y --no-install-recommends \
     linux-image-generic \
-    linux-headers-generic \
     linux-firmware \
     casper \
     lupin-casper \
@@ -97,8 +100,11 @@ apt-get install -y \
     laptop-detect \
     os-prober
 
+# Force initramfs regen to ensure casper hooks are present
+update-initramfs -u || true
+
 # Install bootloader packages
-apt-get install -y \
+apt-get install -y --no-install-recommends \
     grub-common \
     grub2-common \
     grub-pc-bin \
@@ -107,7 +113,7 @@ apt-get install -y \
     shim-signed
 
 # Install desktop environment
-apt-get install -y \
+apt-get install -y --no-install-recommends \
     kde-plasma-desktop \
     plasma-nm \
     plasma-pa \
@@ -115,7 +121,7 @@ apt-get install -y \
     sddm-theme-breeze
 
 # Install applications
-apt-get install -y \
+apt-get install -y --no-install-recommends \
     firefox \
     konsole \
     dolphin \
@@ -126,7 +132,7 @@ apt-get install -y \
     vlc
 
 # Install utilities
-apt-get install -y \
+apt-get install -y --no-install-recommends \
     network-manager \
     wpasupplicant \
     systemsettings \
@@ -158,8 +164,8 @@ SDDM
 
 # Create live user for the live session
 useradd -m -s /bin/bash -G sudo,adm,cdrom,audio,video,plugdev karmaos || true
-echo 'karmaos:karmaos' | chpasswd
-echo 'karmaos ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/karmaos
+echo "karmaos:karmaos" | chpasswd
+echo "karmaos ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/karmaos
 
 # Enable autologin for live session
 mkdir -p /etc/sddm.conf.d
@@ -169,17 +175,21 @@ User=karmaos
 Session=plasma
 AUTOLOGIN
 
-# Clean up
-apt-get clean
-rm -rf /var/lib/apt/lists/*
-rm -rf /tmp/*
-"
+# Enable services for live boot
+systemctl enable sddm NetworkManager
+'
+
+# Clean up apt cache and tmp outside chroot
+sudo chroot "${CHROOT_DIR}" apt-get clean
+sudo rm -rf "${CHROOT_DIR}/var/lib/apt/lists/"*
+sudo rm -rf "${CHROOT_DIR}/tmp"/*
 
 # Unmount chroot filesystems
 sudo umount "${CHROOT_DIR}/sys" || true
 sudo umount "${CHROOT_DIR}/proc" || true
 sudo umount "${CHROOT_DIR}/dev/pts" || true
 sudo umount "${CHROOT_DIR}/dev" || true
+sudo umount "${CHROOT_DIR}/run" || true
 
 # ============================================
 # STEP 4: Create ISO structure
@@ -187,6 +197,11 @@ sudo umount "${CHROOT_DIR}/dev" || true
 echo "==> Creating ISO directory structure..."
 
 mkdir -p "${ISO_DIR}"/{casper,isolinux,boot/grub}
+
+# Generate manifest files expected by casper
+sudo chroot "${CHROOT_DIR}" dpkg-query -W --showformat='${Package} ${Version}\n' \
+    | sudo tee "${ISO_DIR}/casper/filesystem.manifest" > /dev/null
+sudo cp "${ISO_DIR}/casper/filesystem.manifest" "${ISO_DIR}/casper/filesystem.manifest-desktop"
 
 # Create squashfs filesystem
 echo "==> Creating squashfs (this takes 5-10 minutes)..."
@@ -196,9 +211,14 @@ sudo mksquashfs "${CHROOT_DIR}" "${ISO_DIR}/casper/filesystem.squashfs" \
 # Calculate filesystem size
 printf $(sudo du -sx --block-size=1 "${CHROOT_DIR}" | cut -f1) | sudo tee "${ISO_DIR}/casper/filesystem.size" > /dev/null
 
-# Copy kernel and initrd
-KERNEL=$(ls "${CHROOT_DIR}"/boot/vmlinuz-* | head -1)
-INITRD=$(ls "${CHROOT_DIR}"/boot/initrd.img-* | head -1)
+KERNEL=$(find "${CHROOT_DIR}/boot" -maxdepth 1 -type f -name "vmlinuz-*" | sort | tail -n1)
+INITRD=$(find "${CHROOT_DIR}/boot" -maxdepth 1 -type f -name "initrd.img-*" | sort | tail -n1)
+
+if [[ -z "${KERNEL}" || -z "${INITRD}" ]]; then
+    echo "ERROR: Kernel or initrd not found in chroot /boot"
+    sudo ls -lah "${CHROOT_DIR}/boot" || true
+    exit 1
+fi
 
 sudo cp "${KERNEL}" "${ISO_DIR}/casper/vmlinuz"
 sudo cp "${INITRD}" "${ISO_DIR}/casper/initrd"
@@ -220,7 +240,6 @@ PROMPT 0
 DEFAULT live
 
 MENU TITLE KarmaOS ${VERSION} Boot Menu
-MENU BACKGROUND #003366
 MENU COLOR border       30;44   #40ffffff #a0000000 std
 MENU COLOR title        1;36;44 #9033ccff #a0000000 std
 MENU COLOR sel          7;37;40 #e0ffffff #20ffffff all
@@ -230,15 +249,6 @@ LABEL live
     MENU LABEL Start KarmaOS ${VERSION} (Live)
     KERNEL /casper/vmlinuz
     APPEND initrd=/casper/initrd boot=casper quiet splash ---
-
-LABEL live-safe
-    MENU LABEL Start KarmaOS (Safe Mode)
-    KERNEL /casper/vmlinuz
-    APPEND initrd=/casper/initrd boot=casper xforcevesa nomodeset quiet splash ---
-
-LABEL memtest
-    MENU LABEL Memory Test
-    KERNEL /isolinux/memtest
 
 LABEL hd
     MENU LABEL Boot from Hard Disk
@@ -309,6 +319,10 @@ sudo cp /usr/lib/grub/x86_64-efi-signed/grubx64.efi.signed "${ISO_DIR}/EFI/boot/
 if [ -f /usr/lib/shim/shimx64.efi.signed ]; then
     sudo cp /usr/lib/shim/shimx64.efi.signed "${ISO_DIR}/EFI/boot/bootx64.efi"
 fi
+
+# Also provide grub.cfg at EFI/boot for some UEFI implementations
+sudo mkdir -p "${ISO_DIR}/EFI/boot"
+sudo cp "${ISO_DIR}/boot/grub/grub.cfg" "${ISO_DIR}/EFI/boot/grub.cfg" || true
 
 # ============================================
 # STEP 7: Create bootable ISO

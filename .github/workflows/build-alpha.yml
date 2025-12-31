@@ -9,6 +9,7 @@ on:
 jobs:
   build-iso:
     runs-on: ubuntu-24.04
+    timeout-minutes: 180
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,22 +19,24 @@ jobs:
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc
           sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/swift
+          sudo rm -rf /opt/hostedtoolcache
           sudo apt-get clean
           df -h
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y live-build debootstrap syslinux-utils xorriso
-
       - name: Build KarmaOS ISO
-        run: bash scripts/build-iso.sh
+        run: |
+          bash -eux scripts/build-iso.sh
+
+      - name: List dist
+        run: ls -lh dist || true
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
           name: karmaos-26.01-amd64-iso
-          path: dist/karmaos-26.01-amd64.iso
+          path: dist/*.iso
           if-no-files-found: error
 
       - name: Upload checksums
@@ -41,3 +44,4 @@ jobs:
         with:
           name: checksums
           path: dist/SHA256SUMS
+          if-no-files-found: error
