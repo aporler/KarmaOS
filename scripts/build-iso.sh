@@ -83,6 +83,12 @@ network-manager
 wpasupplicant
 linux-firmware
 
+# Bootloader (critical for UEFI boot)
+grub-efi-amd64
+grub-efi-amd64-bin
+grub-efi-amd64-signed
+shim-signed
+
 # System Tools
 systemsettings
 partitionmanager
