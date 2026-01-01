@@ -168,17 +168,30 @@ MaximumUid=60000
 MinimumUid=1000
 SDDM
 
-# Create live user for the live session
-useradd -m -s /bin/bash -G sudo,adm,cdrom,audio,video,plugdev karmaos || true
-echo "karmaos:karmaos" | chpasswd
-echo "karmaos ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/karmaos
+# Create standard Ubuntu live user/group expected by casper/live scripts
+if ! getent group ubuntu >/dev/null 2>&1; then
+    groupadd ubuntu
+fi
+if ! id ubuntu >/dev/null 2>&1; then
+    useradd -m -s /bin/bash -g ubuntu -G sudo,adm,cdrom,audio,video,plugdev ubuntu
+fi
 
-# Enable autologin for live session
-mkdir -p /etc/sddm.conf.d
+# Passwordless sudo (typical for live sessions)
+rm -f /etc/sudoers.d/karmaos 2>/dev/null || true
+cat > /etc/sudoers.d/ubuntu <<SUDOERS
+ubuntu ALL=(ALL) NOPASSWD:ALL
+SUDOERS
+chmod 0440 /etc/sudoers.d/ubuntu
+
+# Enable autologin for live session (SDDM) using Plasma X11 session
 cat > /etc/sddm.conf.d/autologin.conf <<AUTOLOGIN
 [Autologin]
-User=karmaos
-Session=plasma
+User=ubuntu
+Session=plasma.desktop
+
+[General]
+DisplayServer=x11
+WaylandEnable=false
 AUTOLOGIN
 
 # Enable services for live boot
