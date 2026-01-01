@@ -522,8 +522,8 @@ sudo tee "${CHROOT_DIR}/etc/calamares/modules/summary.conf" > /dev/null <<'EOF'
 ---
 EOF
 
-# Show module (for slideshow/presentation)
-sudo tee "${CHROOT_DIR}/etc/calamares/modules/show.qml" > /dev/null <<'EOF'
+# Slideshow QML - MUST be in branding folder, not modules
+sudo tee "${CHROOT_DIR}/etc/calamares/branding/karmaos/show.qml" > /dev/null <<'EOF'
 import QtQuick 2.0
 import calamares.slideshow 1.0
 
