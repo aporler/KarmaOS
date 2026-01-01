@@ -1,52 +1,49 @@
 #!/usr/bin/env python3
 """
 KarmaOS Welcome - Graphical Setup Wizard
-Main GUI application
+Live CD / First Boot experience
 """
 
 import gi
 gi.require_version('Gtk', '3.0')
-gi.require_version('Vte', '2.91')
-from gi.repository import Gtk, GdkPixbuf, Vte, GLib, Gdk
+gi.require_version('WebKit2', '4.0')
+from gi.repository import Gtk, GdkPixbuf, GLib, Gdk, WebKit2
 import os
-import sys
 import subprocess
-import json
 
 if os.environ.get('SNAP'):
     ASSETS_DIR = os.path.join(os.environ['SNAP'], 'share', 'karmaos')
 else:
     ASSETS_DIR = '/usr/share/karmaos'
 
+
 class KarmaOSWelcome(Gtk.Window):
     def __init__(self):
-        super().__init__(title="KarmaOS Setup")
-        self.set_default_size(800, 600)
+        super().__init__(title="KarmaOS Welcome")
+        self.set_default_size(900, 650)
         self.set_position(Gtk.WindowPosition.CENTER)
         self.set_decorated(True)
-        
+
         # State
         self.current_page = 0
-        self.user_data = {}
-        self.selected_apps = []
         self.is_live = self.detect_live_session()
-        
-        # Create notebook for pages
+        self.selected_keyboard = "ca"
+
+        # Main container
         self.notebook = Gtk.Notebook()
         self.notebook.set_show_tabs(False)
         self.notebook.set_show_border(False)
         self.add(self.notebook)
-        
-        # Create pages
-        self.create_welcome_page()
-        self.create_network_page()
-        if not self.is_live:
-            self.create_apps_page()
-            self.create_install_page()
-        else:
-            self.create_live_install_page()
-        self.create_finish_page()
 
+        # Build pages based on context
+        if self.is_live:
+            self.create_live_pages()
+        else:
+            self.create_installed_pages()
+
+    # ─────────────────────────────────────────────────────────────
+    # Detection
+    # ─────────────────────────────────────────────────────────────
     def detect_live_session(self) -> bool:
         """Return True when running from live media (casper)."""
         try:
@@ -56,58 +53,102 @@ class KarmaOSWelcome(Gtk.Window):
                 return True
         except Exception:
             pass
-
-        # Common live paths
         return os.path.exists('/cdrom') or os.path.exists('/run/casper') or os.path.exists('/rofs')
 
-    def create_live_install_page(self):
-        """Live-only page: explain and launch installer."""
-        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-        page.set_margin_start(50)
-        page.set_margin_end(50)
-        page.set_margin_top(30)
-        page.set_margin_bottom(30)
-        page.set_valign(Gtk.Align.CENTER)
+    # ─────────────────────────────────────────────────────────────
+    # LIVE CD pages
+    # ─────────────────────────────────────────────────────────────
+    def create_live_pages(self):
+        self.create_page_welcome()
+        self.create_page_network()
+        self.create_page_vision()
+        self.create_page_keyboard()
+        self.create_page_choice()
+        self.create_page_web()
+
+    # Page 1: Welcome
+    def create_page_welcome(self):
+        page = self._page_box()
+
+        logo_path = f"{ASSETS_DIR}/KarmaOSLogoPixel.png"
+        if os.path.exists(logo_path):
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(logo_path, 180, 180, True)
+            image = Gtk.Image.new_from_pixbuf(pixbuf)
+            page.pack_start(image, False, False, 0)
 
         title = Gtk.Label()
-        title.set_markup('<span size="x-large" weight="bold">Install KarmaOS</span>')
+        title.set_markup('<span size="xx-large" weight="bold">Bienvenue dans KarmaOS 26.01</span>')
+        page.pack_start(title, False, False, 10)
+
+        subtitle = Gtk.Label()
+        subtitle.set_markup('<span size="large">Le système d\'exploitation fait au Québec</span>')
+        subtitle.set_opacity(0.7)
+        page.pack_start(subtitle, False, False, 0)
+
+        btn = Gtk.Button.new_with_label("Commencer")
+        btn.set_size_request(180, 45)
+        btn.connect("clicked", lambda w: self.next_page())
+        page.pack_start(btn, False, False, 30)
+
+        self.notebook.append_page(page)
+
+    # Page 2: Network
+    def create_page_network(self):
+        page = self._page_box()
+
+        title = Gtk.Label()
+        title.set_markup('<span size="x-large" weight="bold">Connexion Internet</span>')
         page.pack_start(title, False, False, 0)
 
         desc = Gtk.Label()
-        desc.set_text(
-            "You are running the LiveCD.\n"
-            "To install KarmaOS on your disk, launch the installer."
-        )
+        desc.set_text("Assurez-vous d'être connecté à Internet pour télécharger les mises à jour.")
+        desc.set_line_wrap(True)
+        desc.set_max_width_chars(60)
         desc.set_justify(Gtk.Justification.CENTER)
-        page.pack_start(desc, False, False, 0)
+        page.pack_start(desc, False, False, 10)
+
+        # Status label
+        self.net_status = Gtk.Label()
+        self.net_status.set_markup('<span foreground="gray">Vérification...</span>')
+        page.pack_start(self.net_status, False, False, 10)
 
         btn_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         btn_box.set_halign(Gtk.Align.CENTER)
 
-        installer_btn = Gtk.Button.new_with_label("Launch Installer")
-        installer_btn.set_size_request(220, 45)
-        installer_btn.connect("clicked", lambda w: self.launch_installer())
-        btn_box.pack_start(installer_btn, False, False, 0)
+        fix_btn = Gtk.Button.new_with_label("Réparer le réseau")
+        fix_btn.connect("clicked", self.on_fix_network)
+        btn_box.pack_start(fix_btn, False, False, 0)
 
-        next_btn = Gtk.Button.new_with_label("Next")
-        next_btn.connect("clicked", lambda w: self.next_page())
-        btn_box.pack_start(next_btn, False, False, 0)
+        refresh_btn = Gtk.Button.new_with_label("Actualiser")
+        refresh_btn.connect("clicked", lambda w: self.check_network())
+        btn_box.pack_start(refresh_btn, False, False, 0)
 
-        page.pack_start(btn_box, False, False, 0)
+        page.pack_start(btn_box, False, False, 10)
+
+        nav = self._nav_box(back=True, next_label="Suivant")
+        page.pack_end(nav, False, False, 0)
+
         self.notebook.append_page(page)
+        GLib.timeout_add(500, self.check_network)
 
-    def launch_installer(self):
-        """Launch Calamares installer."""
-        for cmd in (["pkexec", "calamares"], ["sudo", "-E", "calamares"], ["calamares"]):
-            try:
-                subprocess.Popen(cmd)
-                return
-            except Exception:
-                continue
-        self.show_error("Installer not found or could not be started")
+    def check_network(self):
+        """Check internet connectivity."""
+        try:
+            ret = subprocess.run(
+                ["ping", "-c", "1", "-W", "2", "8.8.8.8"],
+                capture_output=True, timeout=5
+            )
+            if ret.returncode == 0:
+                self.net_status.set_markup('<span foreground="green">✓ Connecté à Internet</span>')
+            else:
+                self.net_status.set_markup('<span foreground="orange">⚠ Pas de connexion Internet</span>')
+        except Exception:
+            self.net_status.set_markup('<span foreground="red">✗ Erreur réseau</span>')
+        return False
 
-    def ensure_network(self):
-        """Try to bring up networking using NetworkManager."""
+    def on_fix_network(self, widget):
+        """Try to fix networking."""
+        self.net_status.set_markup('<span foreground="gray">Réparation en cours...</span>')
         cmds = [
             ["sudo", "systemctl", "restart", "NetworkManager"],
             ["sudo", "nmcli", "networking", "on"],
@@ -115,416 +156,305 @@ class KarmaOSWelcome(Gtk.Window):
         ]
         for cmd in cmds:
             try:
-                subprocess.run(cmd, check=False)
+                subprocess.run(cmd, check=False, timeout=10)
+            except Exception:
+                pass
+        # Try wired connect
+        try:
+            out = subprocess.check_output(["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "device"], text=True, timeout=5)
+            for line in out.splitlines():
+                parts = line.split(':')
+                if len(parts) >= 3 and parts[1] == 'ethernet' and parts[2] != 'connected':
+                    subprocess.run(["sudo", "nmcli", "device", "connect", parts[0]], check=False, timeout=10)
+        except Exception:
+            pass
+        GLib.timeout_add(2000, self.check_network)
+
+    # Page 3: Vision
+    def create_page_vision(self):
+        page = self._page_box()
+
+        title = Gtk.Label()
+        title.set_markup('<span size="x-large" weight="bold">Notre Vision</span>')
+        page.pack_start(title, False, False, 0)
+
+        vision_text = (
+            "Offrir un système d'exploitation fait au Québec qui respecte l'utilisateur :\n"
+            "ouvert, communautaire et libre de tout logiciel propriétaire imposé.\n\n"
+            "Une solution pour ceux qui veulent passer à Linux sans se compliquer la vie,\n"
+            "que leur ordinateur soit neuf ou vieillissant !"
+        )
+        vision = Gtk.Label()
+        vision.set_text(vision_text)
+        vision.set_line_wrap(True)
+        vision.set_max_width_chars(70)
+        vision.set_justify(Gtk.Justification.CENTER)
+        page.pack_start(vision, False, False, 20)
+
+        # English version (smaller)
+        en_text = (
+            "To offer a Quebec-made operating system that respects the user:\n"
+            "open, community-driven, and free of imposed proprietary software.\n"
+            "A solution for people who want to switch to Linux without making their lives complicated,\n"
+            "whether their computer is new or aging!"
+        )
+        en_label = Gtk.Label()
+        en_label.set_markup(f'<span size="small" style="italic" foreground="gray">{en_text}</span>')
+        en_label.set_line_wrap(True)
+        en_label.set_max_width_chars(80)
+        en_label.set_justify(Gtk.Justification.CENTER)
+        page.pack_start(en_label, False, False, 10)
+
+        nav = self._nav_box(back=True, next_label="Suivant")
+        page.pack_end(nav, False, False, 0)
+
+        self.notebook.append_page(page)
+
+    # Page 4: Keyboard
+    def create_page_keyboard(self):
+        page = self._page_box()
+
+        title = Gtk.Label()
+        title.set_markup('<span size="x-large" weight="bold">Configuration du clavier</span>')
+        page.pack_start(title, False, False, 0)
+
+        desc = Gtk.Label()
+        desc.set_text("Sélectionnez la disposition de votre clavier :")
+        page.pack_start(desc, False, False, 10)
+
+        # Keyboard combo
+        keyboard_store = Gtk.ListStore(str, str)
+        keyboards = [
+            ("ca", "Canadien français"),
+            ("us", "Anglais (US)"),
+            ("fr", "Français (AZERTY)"),
+            ("gb", "Anglais (UK)"),
+            ("de", "Allemand"),
+            ("es", "Espagnol"),
+        ]
+        for code, name in keyboards:
+            keyboard_store.append([code, name])
+
+        self.keyboard_combo = Gtk.ComboBox.new_with_model(keyboard_store)
+        renderer = Gtk.CellRendererText()
+        self.keyboard_combo.pack_start(renderer, True)
+        self.keyboard_combo.add_attribute(renderer, "text", 1)
+        self.keyboard_combo.set_active(0)  # Default: ca (Canadien français)
+        self.keyboard_combo.connect("changed", self.on_keyboard_changed)
+        page.pack_start(self.keyboard_combo, False, False, 10)
+
+        # Test entry
+        test_label = Gtk.Label()
+        test_label.set_text("Testez votre clavier ici :")
+        page.pack_start(test_label, False, False, 10)
+
+        self.keyboard_test = Gtk.Entry()
+        self.keyboard_test.set_placeholder_text("Tapez pour tester...")
+        self.keyboard_test.set_size_request(300, -1)
+        page.pack_start(self.keyboard_test, False, False, 0)
+
+        nav = self._nav_box(back=True, next_label="Suivant")
+        page.pack_end(nav, False, False, 0)
+
+        self.notebook.append_page(page)
+
+    def on_keyboard_changed(self, combo):
+        tree_iter = combo.get_active_iter()
+        if tree_iter:
+            model = combo.get_model()
+            code = model[tree_iter][0]
+            self.selected_keyboard = code
+            try:
+                subprocess.run(["setxkbmap", code], check=False, timeout=5)
             except Exception:
                 pass
 
-        # Try to connect any wired device
+    # Page 5: Choice (Install or Try)
+    def create_page_choice(self):
+        page = self._page_box()
+
+        title = Gtk.Label()
+        title.set_markup('<span size="x-large" weight="bold">Que voulez-vous faire ?</span>')
+        page.pack_start(title, False, False, 0)
+
+        desc = Gtk.Label()
+        desc.set_text("Vous pouvez essayer KarmaOS sans l'installer, ou l'installer maintenant.")
+        desc.set_line_wrap(True)
+        page.pack_start(desc, False, False, 20)
+
+        btn_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
+        btn_box.set_halign(Gtk.Align.CENTER)
+
+        install_btn = Gtk.Button()
+        install_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        install_box.set_margin_top(10)
+        install_box.set_margin_bottom(10)
+        install_box.set_margin_start(30)
+        install_box.set_margin_end(30)
+        install_title = Gtk.Label()
+        install_title.set_markup('<span weight="bold" size="large">Installer KarmaOS</span>')
+        install_desc = Gtk.Label()
+        install_desc.set_text("Installe KarmaOS sur votre disque dur")
+        install_desc.set_opacity(0.7)
+        install_box.pack_start(install_title, False, False, 0)
+        install_box.pack_start(install_desc, False, False, 0)
+        install_btn.add(install_box)
+        install_btn.set_size_request(350, 80)
+        install_btn.connect("clicked", self.on_install_clicked)
+        btn_box.pack_start(install_btn, False, False, 0)
+
+        try_btn = Gtk.Button()
+        try_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        try_box.set_margin_top(10)
+        try_box.set_margin_bottom(10)
+        try_box.set_margin_start(30)
+        try_box.set_margin_end(30)
+        try_title = Gtk.Label()
+        try_title.set_markup('<span weight="bold" size="large">Essayer KarmaOS</span>')
+        try_desc = Gtk.Label()
+        try_desc.set_text("Découvrez KarmaOS sans modifier votre ordinateur")
+        try_desc.set_opacity(0.7)
+        try_box.pack_start(try_title, False, False, 0)
+        try_box.pack_start(try_desc, False, False, 0)
+        try_btn.add(try_box)
+        try_btn.set_size_request(350, 80)
+        try_btn.connect("clicked", self.on_try_clicked)
+        btn_box.pack_start(try_btn, False, False, 0)
+
+        page.pack_start(btn_box, False, False, 0)
+
+        back_btn = Gtk.Button.new_with_label("Retour")
+        back_btn.connect("clicked", lambda w: self.prev_page())
+        back_box = Gtk.Box()
+        back_box.set_halign(Gtk.Align.START)
+        back_box.pack_start(back_btn, False, False, 0)
+        page.pack_end(back_box, False, False, 0)
+
+        self.notebook.append_page(page)
+
+    def on_install_clicked(self, widget):
+        """Launch installer and go to final page."""
+        self.launch_installer()
+        self.next_page()
+
+    def on_try_clicked(self, widget):
+        """Just go to final page."""
+        self.next_page()
+
+    def launch_installer(self):
+        """Launch Calamares installer."""
         try:
-            out = subprocess.check_output(["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "device"], text=True)
-            for line in out.splitlines():
-                parts = line.split(':')
-                if len(parts) >= 3:
-                    dev, dev_type, state = parts[0], parts[1], parts[2]
-                    if dev_type == 'ethernet' and state != 'connected':
-                        subprocess.run(["sudo", "nmcli", "device", "connect", dev], check=False)
+            subprocess.Popen(["/usr/local/bin/karmaos-installer"])
         except Exception:
-            pass
-        
-    def create_welcome_page(self):
-        """Page 1: Welcome"""
-        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-        page.set_margin_start(50)
-        page.set_margin_end(50)
-        page.set_margin_top(50)
-        page.set_margin_bottom(50)
-        page.set_valign(Gtk.Align.CENTER)
-        
-        # Logo
+            try:
+                subprocess.Popen(["sudo", "-E", "calamares"])
+            except Exception:
+                self.show_error("Impossible de lancer l'installateur")
+
+    # Page 6: Web page + Close
+    def create_page_web(self):
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        page.set_margin_start(20)
+        page.set_margin_end(20)
+        page.set_margin_top(20)
+        page.set_margin_bottom(20)
+
+        title = Gtk.Label()
+        title.set_markup('<span size="large" weight="bold">Ressources KarmaOS</span>')
+        page.pack_start(title, False, False, 0)
+
+        # WebKit WebView
+        self.webview = WebKit2.WebView()
+        self.webview.load_uri("https://karmaos.ovh/karmaos-welcome/")
+        self.webview.set_vexpand(True)
+        self.webview.set_hexpand(True)
+
+        scroll = Gtk.ScrolledWindow()
+        scroll.set_vexpand(True)
+        scroll.add(self.webview)
+        page.pack_start(scroll, True, True, 0)
+
+        # Close button
+        close_btn = Gtk.Button.new_with_label("Fermer")
+        close_btn.set_size_request(150, 45)
+        close_btn.connect("clicked", lambda w: Gtk.main_quit())
+        btn_box = Gtk.Box()
+        btn_box.set_halign(Gtk.Align.CENTER)
+        btn_box.pack_start(close_btn, False, False, 0)
+        page.pack_start(btn_box, False, False, 10)
+
+        self.notebook.append_page(page)
+
+    # ─────────────────────────────────────────────────────────────
+    # INSTALLED system pages (first boot after install)
+    # ─────────────────────────────────────────────────────────────
+    def create_installed_pages(self):
+        self.create_installed_welcome()
+
+    def create_installed_welcome(self):
+        page = self._page_box()
+
         logo_path = f"{ASSETS_DIR}/KarmaOSLogoPixel.png"
         if os.path.exists(logo_path):
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(logo_path, 200, 200, True)
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(logo_path, 150, 150, True)
             image = Gtk.Image.new_from_pixbuf(pixbuf)
             page.pack_start(image, False, False, 0)
-        
-        # Welcome text
-        welcome = Gtk.Label()
-        welcome.set_markup('<span size="xx-large" weight="bold">Welcome to KarmaOS 26.01</span>')
-        page.pack_start(welcome, False, False, 0)
-        
-        subtitle = Gtk.Label()
-        subtitle.set_markup('<span size="large">A beautiful Ubuntu Core desktop experience</span>')
-        subtitle.set_opacity(0.7)
-        page.pack_start(subtitle, False, False, 0)
-        
-        # Description
-        desc = Gtk.Label()
-        desc.set_text("This wizard will guide you through the initial setup:\n" +
-                      "• Network configuration\n" +
-                      "• User account creation\n" +
-                      "• Application installation")
-        desc.set_justify(Gtk.Justification.LEFT)
-        page.pack_start(desc, False, False, 20)
-        
-        # Next button
-        button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        button_box.set_halign(Gtk.Align.END)
-        next_btn = Gtk.Button.new_with_label("Get Started")
-        next_btn.set_size_request(150, 40)
-        next_btn.connect("clicked", lambda w: self.next_page())
-        button_box.pack_end(next_btn, False, False, 0)
-        page.pack_end(button_box, False, False, 0)
-        
-        self.notebook.append_page(page)
-    
-    def create_network_page(self):
-        """Page 2: Network Configuration"""
-        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-        page.set_margin_start(50)
-        page.set_margin_end(50)
-        page.set_margin_top(30)
-        page.set_margin_bottom(30)
-        
-        title = Gtk.Label()
-        title.set_markup('<span size="x-large" weight="bold">Network Configuration</span>')
-        title.set_halign(Gtk.Align.START)
-        page.pack_start(title, False, False, 0)
-        
-        desc = Gtk.Label()
-        desc.set_text("Configure network connection for updates and app installation")
-        desc.set_halign(Gtk.Align.START)
-        desc.set_opacity(0.7)
-        page.pack_start(desc, False, False, 0)
-        
-        # Network interfaces list
-        scroll = Gtk.ScrolledWindow()
-        scroll.set_vexpand(True)
-        
-        self.network_listbox = Gtk.ListBox()
-        self.network_listbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
-        scroll.add(self.network_listbox)
-        
-        # Populate network interfaces
-        self.populate_network_list()
-        
-        page.pack_start(scroll, True, True, 0)
-        
-        # Actions
-        actions = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
-        actions.set_halign(Gtk.Align.START)
 
-        fix_btn = Gtk.Button.new_with_label("Fix Network (DHCP)")
-        fix_btn.connect("clicked", lambda w: self.ensure_network())
-        actions.pack_start(fix_btn, False, False, 0)
+        title = Gtk.Label()
+        title.set_markup('<span size="xx-large" weight="bold">Bienvenue dans KarmaOS !</span>')
+        page.pack_start(title, False, False, 10)
 
-        skip_btn = Gtk.Button.new_with_label("Skip")
-        skip_btn.connect("clicked", lambda w: self.next_page())
-        actions.pack_start(skip_btn, False, False, 0)
-
-        page.pack_start(actions, False, False, 0)
-        
-        # Navigation buttons
-        nav_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        nav_box.set_spacing(10)
-        back_btn = Gtk.Button.new_with_label("Back")
-        back_btn.connect("clicked", lambda w: self.prev_page())
-        next_btn = Gtk.Button.new_with_label("Next")
-        next_btn.connect("clicked", lambda w: self.next_page())
-        nav_box.pack_start(back_btn, False, False, 0)
-        nav_box.pack_end(next_btn, False, False, 0)
-        page.pack_end(nav_box, False, False, 0)
-        
-        self.notebook.append_page(page)
-    
-    def create_user_page(self):
-        """Page 3: User Account Creation"""
-        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-        page.set_margin_start(50)
-        page.set_margin_end(50)
-        page.set_margin_top(30)
-        page.set_margin_bottom(30)
-        
-        title = Gtk.Label()
-        title.set_markup('<span size="x-large" weight="bold">Create Your Account</span>')
-        title.set_halign(Gtk.Align.START)
-        page.pack_start(title, False, False, 0)
-        
-        # Form
-        grid = Gtk.Grid()
-        grid.set_column_spacing(10)
-        grid.set_row_spacing(15)
-        
-        # Full name
-        grid.attach(Gtk.Label(label="Full Name:", halign=Gtk.Align.END), 0, 0, 1, 1)
-        self.fullname_entry = Gtk.Entry()
-        self.fullname_entry.set_placeholder_text("John Doe")
-        self.fullname_entry.set_hexpand(True)
-        grid.attach(self.fullname_entry, 1, 0, 1, 1)
-        
-        # Username
-        grid.attach(Gtk.Label(label="Username:", halign=Gtk.Align.END), 0, 1, 1, 1)
-        self.username_entry = Gtk.Entry()
-        self.username_entry.set_placeholder_text("admin")
-        grid.attach(self.username_entry, 1, 1, 1, 1)
-        
-        # Password
-        grid.attach(Gtk.Label(label="Password:", halign=Gtk.Align.END), 0, 2, 1, 1)
-        self.password_entry = Gtk.Entry()
-        self.password_entry.set_visibility(False)
-        self.password_entry.set_placeholder_text("Enter password")
-        grid.attach(self.password_entry, 1, 2, 1, 1)
-        
-        # Confirm password
-        grid.attach(Gtk.Label(label="Confirm:", halign=Gtk.Align.END), 0, 3, 1, 1)
-        self.confirm_entry = Gtk.Entry()
-        self.confirm_entry.set_visibility(False)
-        self.confirm_entry.set_placeholder_text("Confirm password")
-        grid.attach(self.confirm_entry, 1, 3, 1, 1)
-        
-        page.pack_start(grid, False, False, 20)
-        
-        # Navigation
-        nav_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        nav_box.set_spacing(10)
-        back_btn = Gtk.Button.new_with_label("Back")
-        back_btn.connect("clicked", lambda w: self.prev_page())
-        next_btn = Gtk.Button.new_with_label("Next")
-        next_btn.connect("clicked", lambda w: self.validate_user_and_next())
-        nav_box.pack_start(back_btn, False, False, 0)
-        nav_box.pack_end(next_btn, False, False, 0)
-        page.pack_end(nav_box, False, False, 0)
-        
-        self.notebook.append_page(page)
-    
-    def create_apps_page(self):
-        """Page 4: Application Selection"""
-        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-        page.set_margin_start(50)
-        page.set_margin_end(50)
-        page.set_margin_top(30)
-        page.set_margin_bottom(30)
-        
-        title = Gtk.Label()
-        title.set_markup('<span size="x-large" weight="bold">Select Applications</span>')
-        title.set_halign(Gtk.Align.START)
-        page.pack_start(title, False, False, 0)
-        
         desc = Gtk.Label()
-        desc.set_text("Choose which applications to install (you can add more later)")
-        desc.set_halign(Gtk.Align.START)
-        desc.set_opacity(0.7)
-        page.pack_start(desc, False, False, 0)
-        
-        # App checkboxes
-        scroll = Gtk.ScrolledWindow()
-        scroll.set_vexpand(True)
-        
-        app_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        app_box.set_margin_start(20)
-        app_box.set_margin_top(10)
-        
-        self.app_checks = {}
-        apps = [
-            ("firefox", "Firefox", "Mozilla web browser", True, True),
-            ("libreoffice", "LibreOffice", "Office suite", True, False),
-            ("thunderbird", "Thunderbird", "Email client", True, False),
-            ("vlc", "VLC Media Player", "Video player", True, False),
-        ]
-        
-        for snap_name, display_name, description, enabled, default in apps:
-            check = Gtk.CheckButton.new_with_label(f"{display_name} - {description}")
-            check.set_active(default)
-            check.set_sensitive(enabled)
-            self.app_checks[snap_name] = check
-            app_box.pack_start(check, False, False, 0)
-        
-        scroll.add(app_box)
-        page.pack_start(scroll, True, True, 0)
-        
-        # Navigation
-        nav_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        nav_box.set_spacing(10)
-        back_btn = Gtk.Button.new_with_label("Back")
-        back_btn.connect("clicked", lambda w: self.prev_page())
-        install_btn = Gtk.Button.new_with_label("Install")
-        install_btn.connect("clicked", lambda w: self.start_installation())
-        nav_box.pack_start(back_btn, False, False, 0)
-        nav_box.pack_end(install_btn, False, False, 0)
-        page.pack_end(nav_box, False, False, 0)
-        
-        self.notebook.append_page(page)
-    
-    def create_install_page(self):
-        """Page 5: Installation Progress"""
-        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-        page.set_margin_start(50)
-        page.set_margin_end(50)
-        page.set_margin_top(30)
-        page.set_margin_bottom(30)
-        page.set_valign(Gtk.Align.CENTER)
-        
-        title = Gtk.Label()
-        title.set_markup('<span size="x-large" weight="bold">Installing KarmaOS</span>')
-        page.pack_start(title, False, False, 0)
-        
-        self.install_label = Gtk.Label()
-        self.install_label.set_text("Preparing installation...")
-        page.pack_start(self.install_label, False, False, 0)
-        
-        self.install_progress = Gtk.ProgressBar()
-        self.install_progress.set_show_text(True)
-        page.pack_start(self.install_progress, False, False, 0)
-        
-        # Terminal output
-        scroll = Gtk.ScrolledWindow()
-        scroll.set_vexpand(True)
-        self.install_terminal = Vte.Terminal()
-        self.install_terminal.set_size(80, 24)
-        scroll.add(self.install_terminal)
-        page.pack_start(scroll, True, True, 10)
-        
-        self.notebook.append_page(page)
-    
-    def create_finish_page(self):
-        """Page 6: Finish"""
-        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-        page.set_margin_start(50)
-        page.set_margin_end(50)
-        page.set_margin_top(50)
-        page.set_margin_bottom(50)
-        page.set_valign(Gtk.Align.CENTER)
-        
-        # Success icon (checkmark)
-        title = Gtk.Label()
-        title.set_markup('<span size="xx-large">✓</span>')
-        page.pack_start(title, False, False, 0)
-        
-        success = Gtk.Label()
-        success.set_markup('<span size="x-large" weight="bold">KarmaOS is Ready!</span>')
-        page.pack_start(success, False, False, 0)
-        
-        desc = Gtk.Label()
-        desc.set_text("Your system has been configured successfully.\nClick Finish to start using KarmaOS.")
-        desc.set_justify(Gtk.Justification.CENTER)
-        page.pack_start(desc, False, False, 10)
-        
-        # Finish button
-        button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        button_box.set_halign(Gtk.Align.CENTER)
-        finish_btn = Gtk.Button.new_with_label("Finish & Reboot")
-        finish_btn.set_size_request(200, 50)
-        finish_btn.connect("clicked", lambda w: self.finish_setup())
-        button_box.pack_start(finish_btn, False, False, 0)
-        page.pack_start(button_box, False, False, 20)
-        
-        self.notebook.append_page(page)
-    
-    def populate_network_list(self):
-        """Populate network interfaces"""
-        row = Gtk.ListBoxRow()
-        label = Gtk.Label(label="DHCP (Automatic) - Recommended", xalign=0)
-        label.set_margin_start(10)
-        label.set_margin_end(10)
-        label.set_margin_top(10)
-        label.set_margin_bottom(10)
-        row.add(label)
-        self.network_listbox.add(row)
-    
-    def validate_user_and_next(self):
-        """Validate user input before proceeding"""
-        username = self.username_entry.get_text()
-        password = self.password_entry.get_text()
-        confirm = self.confirm_entry.get_text()
-        fullname = self.fullname_entry.get_text()
-        
-        if not username or not password:
-            self.show_error("Please fill in all fields")
-            return
-        
-        if password != confirm:
-            self.show_error("Passwords do not match")
-            return
-        
-        if len(password) < 4:
-            self.show_error("Password must be at least 4 characters")
-            return
-        
-        self.user_data = {
-            'username': username,
-            'password': password,
-            'fullname': fullname or username
-        }
-        
-        self.next_page()
-    
-    def start_installation(self):
-        """Start the installation process"""
-        # Collect selected apps
-        self.selected_apps = [
-            snap for snap, check in self.app_checks.items() 
-            if check.get_active()
-        ]
-        
-        self.next_page()
-        GLib.timeout_add(500, self.run_installation)
-    
-    def run_installation(self):
-        """Run the actual installation"""
-        total_apps = len(self.selected_apps)
-        current = 0
-        
-        # Install each app
-        for pkg in self.selected_apps:
-            self.install_label.set_text(f"Installing {pkg}...")
-            self.install_progress.set_fraction(0 if total_apps == 0 else (current / total_apps))
-            self.install_apt(pkg)
-            current += 1
-        
-        # Configure wallpaper
-        self.configure_system()
-        
-        self.install_progress.set_fraction(1.0)
-        self.install_label.set_text("Installation complete!")
-        
-        GLib.timeout_add(2000, self.next_page)
-        return False
-    
-    def install_apt(self, package_name: str):
-        """Install a deb package via apt."""
-        cmd = ["sudo", "apt-get", "update"]
-        self.run_command(cmd)
-        cmd = ["sudo", "apt-get", "install", "-y", package_name]
-        self.run_command(cmd)
-    
-    def configure_system(self):
-        """Configure system settings"""
-        # Set wallpaper (will be applied when user logs in)
-        wallpaper_path = f"{ASSETS_DIR}/KarmaOSBack.png"
-        if os.path.exists(wallpaper_path):
-            user_home = f"/home/{self.user_data['username']}"
-            subprocess.run(["sudo", "cp", wallpaper_path, f"{user_home}/.wallpaper.png"])
-    
-    def run_command(self, cmd):
-        """Run command and display in terminal"""
-        if isinstance(cmd, list):
-            cmd = ' '.join(cmd)
-        self.install_terminal.spawn_sync(
-            Vte.PtyFlags.DEFAULT,
-            os.environ['HOME'],
-            ["/bin/bash", "-c", cmd],
-            [],
-            GLib.SpawnFlags.DO_NOT_REAP_CHILD,
-            None,
-            None,
+        desc.set_text(
+            "Votre installation est terminée.\n"
+            "Profitez de votre nouveau système d'exploitation québécois !"
         )
-    
-    def finish_setup(self):
-        """Finish setup and reboot"""
-        subprocess.run(["sudo", "reboot"])
-        Gtk.main_quit()
-    
+        desc.set_justify(Gtk.Justification.CENTER)
+        page.pack_start(desc, False, False, 20)
+
+        btn = Gtk.Button.new_with_label("Commencer à utiliser KarmaOS")
+        btn.set_size_request(280, 50)
+        btn.connect("clicked", lambda w: Gtk.main_quit())
+        page.pack_start(btn, False, False, 0)
+
+        self.notebook.append_page(page)
+
+    # ─────────────────────────────────────────────────────────────
+    # Helpers
+    # ─────────────────────────────────────────────────────────────
+    def _page_box(self):
+        """Create a standard page container."""
+        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
+        box.set_margin_start(50)
+        box.set_margin_end(50)
+        box.set_margin_top(40)
+        box.set_margin_bottom(40)
+        box.set_valign(Gtk.Align.CENTER)
+        box.set_halign(Gtk.Align.CENTER)
+        return box
+
+    def _nav_box(self, back=False, next_label="Suivant"):
+        """Create navigation buttons."""
+        nav = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        nav.set_margin_top(20)
+        if back:
+            back_btn = Gtk.Button.new_with_label("Retour")
+            back_btn.connect("clicked", lambda w: self.prev_page())
+            nav.pack_start(back_btn, False, False, 0)
+        next_btn = Gtk.Button.new_with_label(next_label)
+        next_btn.connect("clicked", lambda w: self.next_page())
+        nav.pack_end(next_btn, False, False, 0)
+        return nav
+
+    def next_page(self):
+        self.current_page += 1
+        self.notebook.set_current_page(self.current_page)
+
+    def prev_page(self):
+        self.current_page -= 1
+        self.notebook.set_current_page(self.current_page)
+
     def show_error(self, message):
-        """Show error dialog"""
         dialog = Gtk.MessageDialog(
             parent=self,
             flags=0,
@@ -534,23 +464,14 @@ class KarmaOSWelcome(Gtk.Window):
         )
         dialog.run()
         dialog.destroy()
-    
-    def next_page(self):
-        """Go to next page"""
-        self.current_page += 1
-        self.notebook.set_current_page(self.current_page)
-    
-    def prev_page(self):
-        """Go to previous page"""
-        self.current_page -= 1
-        self.notebook.set_current_page(self.current_page)
+
 
 def main():
     win = KarmaOSWelcome()
     win.connect("destroy", Gtk.main_quit)
     win.show_all()
-    win.fullscreen()  # Fullscreen pour l'expérience immersive
     Gtk.main()
+
 
 if __name__ == "__main__":
     main()

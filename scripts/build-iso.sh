@@ -180,7 +180,9 @@ apt-get install -y --no-install-recommends \
     python3-gi \
     python3-gi-cairo \
     gir1.2-gtk-3.0 \
-    gir1.2-vte-2.91
+    gir1.2-vte-2.91 \
+    gir1.2-webkit2-4.0 \
+    x11-xkb-utils
 
 # Generate locales
 locale-gen en_US.UTF-8
@@ -299,12 +301,26 @@ EOF
 # Desktop shortcut: installer
 sudo install -d "${CHROOT_DIR}/home/ubuntu/Desktop"
 
-# Wrapper that launches installer with privileges
+# Polkit rule: allow members of sudo group to run Calamares without password
+sudo install -d "${CHROOT_DIR}/etc/polkit-1/rules.d"
+sudo tee "${CHROOT_DIR}/etc/polkit-1/rules.d/49-nopasswd-calamares.rules" > /dev/null <<'EOF'
+/* Allow live user (in sudo group) to run Calamares without authentication */
+polkit.addRule(function(action, subject) {
+    if ((action.id == "org.freedesktop.policykit.exec" ||
+         action.id.indexOf("com.github.calamares") === 0) &&
+        subject.isInGroup("sudo")) {
+        return polkit.Result.YES;
+    }
+});
+EOF
+sudo chmod 0644 "${CHROOT_DIR}/etc/polkit-1/rules.d/49-nopasswd-calamares.rules"
+
+# Wrapper that launches installer with privileges (direct sudo, no pkexec)
 sudo tee "${CHROOT_DIR}/usr/local/bin/karmaos-installer" > /dev/null <<'EOF'
 #!/usr/bin/env bash
 set -e
 
-# In the live session, user 'ubuntu' is passwordless sudo; avoid pkexec prompts.
+# In the live session, user 'ubuntu' has passwordless sudo.
 exec sudo -E calamares
 EOF
 sudo chmod +x "${CHROOT_DIR}/usr/local/bin/karmaos-installer"
