@@ -29,6 +29,7 @@ class KarmaOSWelcome(Gtk.Window):
         self.current_page = 0
         self.user_data = {}
         self.selected_apps = []
+        self.is_live = self.detect_live_session()
         
         # Create notebook for pages
         self.notebook = Gtk.Notebook()
@@ -39,10 +40,96 @@ class KarmaOSWelcome(Gtk.Window):
         # Create pages
         self.create_welcome_page()
         self.create_network_page()
-        self.create_user_page()
-        self.create_apps_page()
-        self.create_install_page()
+        if not self.is_live:
+            self.create_apps_page()
+            self.create_install_page()
+        else:
+            self.create_live_install_page()
         self.create_finish_page()
+
+    def detect_live_session(self) -> bool:
+        """Return True when running from live media (casper)."""
+        try:
+            with open('/proc/cmdline', 'r', encoding='utf-8') as f:
+                cmdline = f.read()
+            if 'boot=casper' in cmdline or 'casper' in cmdline:
+                return True
+        except Exception:
+            pass
+
+        # Common live paths
+        return os.path.exists('/cdrom') or os.path.exists('/run/casper') or os.path.exists('/rofs')
+
+    def create_live_install_page(self):
+        """Live-only page: explain and launch installer."""
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+        page.set_margin_start(50)
+        page.set_margin_end(50)
+        page.set_margin_top(30)
+        page.set_margin_bottom(30)
+        page.set_valign(Gtk.Align.CENTER)
+
+        title = Gtk.Label()
+        title.set_markup('<span size="x-large" weight="bold">Install KarmaOS</span>')
+        page.pack_start(title, False, False, 0)
+
+        desc = Gtk.Label()
+        desc.set_text(
+            "You are running the LiveCD.\n"
+            "To install KarmaOS on your disk, launch the installer."
+        )
+        desc.set_justify(Gtk.Justification.CENTER)
+        page.pack_start(desc, False, False, 0)
+
+        btn_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        btn_box.set_halign(Gtk.Align.CENTER)
+
+        installer_btn = Gtk.Button.new_with_label("Launch Installer")
+        installer_btn.set_size_request(220, 45)
+        installer_btn.connect("clicked", lambda w: self.launch_installer())
+        btn_box.pack_start(installer_btn, False, False, 0)
+
+        next_btn = Gtk.Button.new_with_label("Next")
+        next_btn.connect("clicked", lambda w: self.next_page())
+        btn_box.pack_start(next_btn, False, False, 0)
+
+        page.pack_start(btn_box, False, False, 0)
+        self.notebook.append_page(page)
+
+    def launch_installer(self):
+        """Launch Calamares installer."""
+        for cmd in (["pkexec", "calamares"], ["sudo", "-E", "calamares"], ["calamares"]):
+            try:
+                subprocess.Popen(cmd)
+                return
+            except Exception:
+                continue
+        self.show_error("Installer not found or could not be started")
+
+    def ensure_network(self):
+        """Try to bring up networking using NetworkManager."""
+        cmds = [
+            ["sudo", "systemctl", "restart", "NetworkManager"],
+            ["sudo", "nmcli", "networking", "on"],
+            ["sudo", "nmcli", "radio", "wifi", "on"],
+        ]
+        for cmd in cmds:
+            try:
+                subprocess.run(cmd, check=False)
+            except Exception:
+                pass
+
+        # Try to connect any wired device
+        try:
+            out = subprocess.check_output(["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "device"], text=True)
+            for line in out.splitlines():
+                parts = line.split(':')
+                if len(parts) >= 3:
+                    dev, dev_type, state = parts[0], parts[1], parts[2]
+                    if dev_type == 'ethernet' and state != 'connected':
+                        subprocess.run(["sudo", "nmcli", "device", "connect", dev], check=False)
+        except Exception:
+            pass
         
     def create_welcome_page(self):
         """Page 1: Welcome"""
@@ -122,10 +209,19 @@ class KarmaOSWelcome(Gtk.Window):
         
         page.pack_start(scroll, True, True, 0)
         
-        # Skip button for already connected
-        skip_btn = Gtk.Button.new_with_label("Skip (already connected)")
+        # Actions
+        actions = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        actions.set_halign(Gtk.Align.START)
+
+        fix_btn = Gtk.Button.new_with_label("Fix Network (DHCP)")
+        fix_btn.connect("clicked", lambda w: self.ensure_network())
+        actions.pack_start(fix_btn, False, False, 0)
+
+        skip_btn = Gtk.Button.new_with_label("Skip")
         skip_btn.connect("clicked", lambda w: self.next_page())
-        page.pack_start(skip_btn, False, False, 0)
+        actions.pack_start(skip_btn, False, False, 0)
+
+        page.pack_start(actions, False, False, 0)
         
         # Navigation buttons
         nav_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
@@ -229,16 +325,10 @@ class KarmaOSWelcome(Gtk.Window):
         
         self.app_checks = {}
         apps = [
-            ("plasma-desktop-session", "Plasma Desktop", "KDE desktop environment", True, True),
-            ("gnome-42-2204", "GNOME 42 Provider", "Required for some apps", True, True),
-            ("mesa-2404", "Mesa GPU Provider", "Graphics acceleration", True, True),
-            ("gtk-common-themes", "GTK Themes", "Visual themes support", True, True),
-            ("brave", "Brave Browser", "Privacy-focused web browser", True, False),
-            ("firefox", "Firefox", "Mozilla web browser", False, False),
-            ("snap-store", "Snap Store", "Application installer", False, False),
-            ("libreoffice", "LibreOffice", "Office suite", False, False),
-            ("thunderbird", "Thunderbird", "Email client", False, False),
-            ("vlc", "VLC Media Player", "Video player", False, False),
+            ("firefox", "Firefox", "Mozilla web browser", True, True),
+            ("libreoffice", "LibreOffice", "Office suite", True, False),
+            ("thunderbird", "Thunderbird", "Email client", True, False),
+            ("vlc", "VLC Media Player", "Video player", True, False),
         ]
         
         for snap_name, display_name, description, enabled, default in apps:
@@ -380,20 +470,14 @@ class KarmaOSWelcome(Gtk.Window):
     
     def run_installation(self):
         """Run the actual installation"""
-        total_apps = len(self.selected_apps) + 1  # +1 for user creation
+        total_apps = len(self.selected_apps)
         current = 0
         
-        # Create user first
-        self.install_label.set_text(f"Creating user {self.user_data['username']}...")
-        self.install_progress.set_fraction(current / total_apps)
-        self.create_user()
-        current += 1
-        
         # Install each app
-        for snap in self.selected_apps:
-            self.install_label.set_text(f"Installing {snap}...")
-            self.install_progress.set_fraction(current / total_apps)
-            self.install_snap(snap)
+        for pkg in self.selected_apps:
+            self.install_label.set_text(f"Installing {pkg}...")
+            self.install_progress.set_fraction(0 if total_apps == 0 else (current / total_apps))
+            self.install_apt(pkg)
             current += 1
         
         # Configure wallpaper
@@ -405,24 +489,11 @@ class KarmaOSWelcome(Gtk.Window):
         GLib.timeout_add(2000, self.next_page)
         return False
     
-    def create_user(self):
-        """Create system user"""
-        cmd = [
-            "sudo", "useradd", "-m", "-s", "/bin/bash",
-            "-c", self.user_data['fullname'],
-            "-G", "sudo,adm,users",
-            self.user_data['username']
-        ]
+    def install_apt(self, package_name: str):
+        """Install a deb package via apt."""
+        cmd = ["sudo", "apt-get", "update"]
         self.run_command(cmd)
-        
-        # Set password
-        cmd = f"echo '{self.user_data['username']}:{self.user_data['password']}' | sudo chpasswd"
-        subprocess.run(cmd, shell=True)
-    
-    def install_snap(self, snap_name):
-        """Install a snap package"""
-        channel = "latest/edge" if snap_name == "plasma-desktop-session" else "latest/stable"
-        cmd = ["snap", "install", snap_name, f"--channel={channel}"]
+        cmd = ["sudo", "apt-get", "install", "-y", package_name]
         self.run_command(cmd)
     
     def configure_system(self):

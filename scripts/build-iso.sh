@@ -155,6 +155,9 @@ apt-get install -y --no-install-recommends \
     policykit-1 \
     polkit-kde-agent-1 \
     modemmanager \
+    iputils-ping \
+    dnsutils \
+    isc-dhcp-client \
     systemsettings \
     partitionmanager \
     vim \
@@ -225,6 +228,14 @@ systemctl enable sddm NetworkManager
 
 echo "==> Installing KarmaOS branding + tools into chroot..."
 
+# Ensure NetworkManager manages interfaces (netplan)
+sudo install -d "${CHROOT_DIR}/etc/netplan"
+sudo tee "${CHROOT_DIR}/etc/netplan/01-network-manager-all.yaml" > /dev/null <<'EOF'
+network:
+    version: 2
+    renderer: NetworkManager
+EOF
+
 # Branding assets
 sudo install -d "${CHROOT_DIR}/usr/share/karmaos"
 sudo install -m 0644 "$(pwd)/images/KarmaOSBack.png" "${CHROOT_DIR}/usr/share/karmaos/KarmaOSBack.png"
@@ -287,17 +298,31 @@ EOF
 
 # Desktop shortcut: installer
 sudo install -d "${CHROOT_DIR}/home/ubuntu/Desktop"
-sudo tee "${CHROOT_DIR}/home/ubuntu/Desktop/Install%20KarmaOS.desktop" > /dev/null <<'EOF'
+
+# Wrapper that launches installer with privileges
+sudo tee "${CHROOT_DIR}/usr/local/bin/karmaos-installer" > /dev/null <<'EOF'
+#!/usr/bin/env bash
+set -e
+
+if command -v pkexec >/dev/null 2>&1; then
+    exec pkexec calamares
+fi
+
+exec sudo -E calamares
+EOF
+sudo chmod +x "${CHROOT_DIR}/usr/local/bin/karmaos-installer"
+
+sudo tee "${CHROOT_DIR}/home/ubuntu/Desktop/Install KarmaOS.desktop" > /dev/null <<'EOF'
 [Desktop Entry]
 Type=Application
 Name=Install KarmaOS
 Comment=Install KarmaOS on your computer
-Exec=calamares
+Exec=/usr/local/bin/karmaos-installer
 Icon=system-software-install
 Terminal=false
 Categories=System;
 EOF
-sudo chmod +x "${CHROOT_DIR}/home/ubuntu/Desktop/Install%20KarmaOS.desktop"
+sudo chmod +x "${CHROOT_DIR}/home/ubuntu/Desktop/Install KarmaOS.desktop"
 sudo chown -R 1000:1000 "${CHROOT_DIR}/home/ubuntu" || true
 
 # Basic distro branding
