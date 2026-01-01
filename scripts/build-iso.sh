@@ -165,7 +165,7 @@ apt-get install -y --no-install-recommends \
     btrfs-progs \
     xfsprogs \
     ntfs-3g \
-    gptfdisk \
+    gdisk \
     systemsettings \
     partitionmanager \
     vim \
