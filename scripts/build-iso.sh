@@ -158,6 +158,14 @@ apt-get install -y --no-install-recommends \
     iputils-ping \
     dnsutils \
     isc-dhcp-client \
+    util-linux \
+    parted \
+    dosfstools \
+    e2fsprogs \
+    btrfs-progs \
+    xfsprogs \
+    ntfs-3g \
+    gptfdisk \
     systemsettings \
     partitionmanager \
     vim \
