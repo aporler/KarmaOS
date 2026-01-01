@@ -96,6 +96,7 @@ apt-get update
 apt-get install -y --no-install-recommends \
     linux-image-generic \
     linux-firmware \
+    linux-modules-extra-generic \
     casper \
     discover \
     laptop-detect \
@@ -140,7 +141,16 @@ apt-get install -y --no-install-recommends \
 # Install utilities
 apt-get install -y --no-install-recommends \
     network-manager \
+    netplan.io \
+    networkd-dispatcher \
     wpasupplicant \
+    rfkill \
+    wireless-tools \
+    pciutils \
+    usbutils \
+    policykit-1 \
+    polkit-kde-agent-1 \
+    modemmanager \
     systemsettings \
     partitionmanager \
     vim \
@@ -153,6 +163,17 @@ apt-get install -y --no-install-recommends \
     fonts-liberation \
     sudo \
     locales
+
+# Installer (Calamares)
+apt-get install -y --no-install-recommends calamares
+
+# KarmaOS-Welcome runtime deps
+apt-get install -y --no-install-recommends \
+    python3 \
+    python3-gi \
+    python3-gi-cairo \
+    gir1.2-gtk-3.0 \
+    gir1.2-vte-2.91
 
 # Generate locales
 locale-gen en_US.UTF-8
@@ -197,6 +218,96 @@ AUTOLOGIN
 # Enable services for live boot
 systemctl enable sddm NetworkManager
 '
+
+echo "==> Installing KarmaOS branding + tools into chroot..."
+
+# Branding assets
+sudo install -d "${CHROOT_DIR}/usr/share/karmaos"
+sudo install -m 0644 "$(pwd)/images/KarmaOSBack.png" "${CHROOT_DIR}/usr/share/karmaos/KarmaOSBack.png"
+sudo install -m 0644 "$(pwd)/images/KarmaOSLogoPixel.png" "${CHROOT_DIR}/usr/share/karmaos/KarmaOSLogoPixel.png"
+
+# KarmaOS Welcome
+sudo install -d "${CHROOT_DIR}/usr/local/lib/karmaos-welcome"
+sudo install -m 0755 "$(pwd)/snaps/karmaos-welcome/src/karmaos-welcome-gui.py" "${CHROOT_DIR}/usr/local/lib/karmaos-welcome/karmaos-welcome-gui.py"
+sudo tee "${CHROOT_DIR}/usr/local/bin/karmaos-welcome" > /dev/null <<'EOF'
+#!/usr/bin/env bash
+exec /usr/bin/env python3 /usr/local/lib/karmaos-welcome/karmaos-welcome-gui.py
+EOF
+sudo chmod +x "${CHROOT_DIR}/usr/local/bin/karmaos-welcome"
+
+# Autostart: apply wallpaper + open KarmaOS-Welcome
+sudo install -d "${CHROOT_DIR}/usr/local/bin"
+sudo tee "${CHROOT_DIR}/usr/local/bin/karmaos-apply-branding" > /dev/null <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Wait for PlasmaShell
+for _ in $(seq 1 30); do
+    if qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.version >/dev/null 2>&1; then
+        break
+    fi
+    sleep 1
+done
+
+# Set wallpaper to KarmaOSBack.png
+qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
+var allDesktops = desktops();
+for (i=0; i<allDesktops.length; i++) {
+    d = allDesktops[i];
+    d.wallpaperPlugin = 'org.kde.image';
+    d.currentConfigGroup = Array('Wallpaper', 'org.kde.image', 'General');
+    d.writeConfig('Image', 'file:///usr/share/karmaos/KarmaOSBack.png');
+}
+" || true
+EOF
+sudo chmod +x "${CHROOT_DIR}/usr/local/bin/karmaos-apply-branding"
+
+sudo install -d "${CHROOT_DIR}/etc/xdg/autostart"
+sudo tee "${CHROOT_DIR}/etc/xdg/autostart/karmaos-branding.desktop" > /dev/null <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=KarmaOS Branding
+Exec=/usr/local/bin/karmaos-apply-branding
+X-GNOME-Autostart-enabled=true
+NoDisplay=true
+EOF
+
+sudo tee "${CHROOT_DIR}/etc/xdg/autostart/karmaos-welcome.desktop" > /dev/null <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=KarmaOS Welcome
+Exec=/usr/local/bin/karmaos-welcome
+X-GNOME-Autostart-enabled=true
+NoDisplay=false
+EOF
+
+# Desktop shortcut: installer
+sudo install -d "${CHROOT_DIR}/home/ubuntu/Desktop"
+sudo tee "${CHROOT_DIR}/home/ubuntu/Desktop/Install%20KarmaOS.desktop" > /dev/null <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Install KarmaOS
+Comment=Install KarmaOS on your computer
+Exec=calamares
+Icon=system-software-install
+Terminal=false
+Categories=System;
+EOF
+sudo chmod +x "${CHROOT_DIR}/home/ubuntu/Desktop/Install%20KarmaOS.desktop"
+sudo chown -R 1000:1000 "${CHROOT_DIR}/home/ubuntu" || true
+
+# Basic distro branding
+sudo tee "${CHROOT_DIR}/etc/os-release" > /dev/null <<EOF
+NAME="KarmaOS"
+PRETTY_NAME="KarmaOS ${VERSION}"
+ID=karmaos
+ID_LIKE=ubuntu
+VERSION_ID="${VERSION}"
+VERSION="${VERSION}"
+HOME_URL="https://github.com/aporler/KarmaOS"
+SUPPORT_URL="https://github.com/aporler/KarmaOS/issues"
+BUG_REPORT_URL="https://github.com/aporler/KarmaOS/issues"
+EOF
 
 # Clean up apt cache and tmp outside chroot
 sudo chroot "${CHROOT_DIR}" apt-get clean

@@ -13,7 +13,10 @@ import sys
 import subprocess
 import json
 
-ASSETS_DIR = os.environ.get('SNAP', '.') + '/share/karmaos'
+if os.environ.get('SNAP'):
+    ASSETS_DIR = os.path.join(os.environ['SNAP'], 'share', 'karmaos')
+else:
+    ASSETS_DIR = '/usr/share/karmaos'
 
 class KarmaOSWelcome(Gtk.Window):
     def __init__(self):
