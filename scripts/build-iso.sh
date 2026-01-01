@@ -398,32 +398,159 @@ EOF
 
 # Unpack filesystem from the live media (casper squashfs)
 sudo tee "${CHROOT_DIR}/etc/calamares/modules/unpackfs.conf" > /dev/null <<'EOF'
+---
 unpack:
-    - source: "/cdrom/casper/filesystem.squashfs"
-        sourcefs: "squashfs"
-        destination: "/"
+  - source: "/cdrom/casper/filesystem.squashfs"
+    sourcefs: "squashfs"
+    destination: ""
+EOF
+
+# Users module - create user account
+sudo tee "${CHROOT_DIR}/etc/calamares/modules/users.conf" > /dev/null <<'EOF'
+---
+defaultGroups:
+  - sudo
+  - adm
+  - cdrom
+  - audio
+  - video
+  - plugdev
+  - users
+autologinGroup: autologin
+sudoersGroup: sudo
+setRootPassword: false
+doAutologin: false
+EOF
+
+# Partition module
+sudo tee "${CHROOT_DIR}/etc/calamares/modules/partition.conf" > /dev/null <<'EOF'
+---
+efiSystemPartition: "/boot/efi"
+userSwapChoices:
+  - none
+  - small
+  - suspend
+  - file
+initialPartitioningChoice: none
+drawNestedPartitions: false
+alwaysShowPartitionLabels: true
+enableLuksAutomatedPartitioning: true
+allowManualPartitioning: true
+EOF
+
+# Mount module
+sudo tee "${CHROOT_DIR}/etc/calamares/modules/mount.conf" > /dev/null <<'EOF'
+---
+extraMounts:
+  - device: proc
+    fs: proc
+    mountPoint: /proc
+  - device: sys
+    fs: sysfs
+    mountPoint: /sys
+  - device: /dev
+    mountPoint: /dev
+    options: bind
+  - device: tmpfs
+    fs: tmpfs
+    mountPoint: /run
+  - device: /run/udev
+    mountPoint: /run/udev
+    options: bind
+EOF
+
+# Bootloader module
+sudo tee "${CHROOT_DIR}/etc/calamares/modules/bootloader.conf" > /dev/null <<'EOF'
+---
+efiBootLoader: "grub"
+kernel: "/vmlinuz"
+img: "/initrd.img"
+timeout: "10"
+grubInstall: "grub-install"
+grubMkconfig: "grub-mkconfig"
+grubCfg: "/boot/grub/grub.cfg"
+efiBootloaderId: "KarmaOS"
+EOF
+
+# Locale module
+sudo tee "${CHROOT_DIR}/etc/calamares/modules/locale.conf" > /dev/null <<'EOF'
+---
+region: "America"
+zone: "Montreal"
+localeGenPath: "/etc/locale.gen"
+EOF
+
+# Keyboard module
+sudo tee "${CHROOT_DIR}/etc/calamares/modules/keyboard.conf" > /dev/null <<'EOF'
+---
+xOrgConfFileName: "/etc/X11/xorg.conf.d/00-keyboard.conf"
+convertedKeymapPath: "/lib/kbd/keymaps/xkb"
+EOF
+
+# Welcome module
+sudo tee "${CHROOT_DIR}/etc/calamares/modules/welcome.conf" > /dev/null <<'EOF'
+---
+showSupportUrl: true
+showKnownIssuesUrl: false
+showReleaseNotesUrl: false
+requirements:
+  requiredStorage: 10.0
+  requiredRam: 1.0
+  internetCheckUrl: http://google.com
+  check:
+    - storage
+    - ram
+    - power
+    - internet
+    - root
+  required:
+    - storage
+    - ram
+    - root
+EOF
+
+# Summary module
+sudo tee "${CHROOT_DIR}/etc/calamares/modules/summary.conf" > /dev/null <<'EOF'
+---
 EOF
 
 # Hide reboot checkbox/button on the finish page (avoid "Finish & Reboot")
 sudo tee "${CHROOT_DIR}/etc/calamares/modules/finished.conf" > /dev/null <<'EOF'
+---
 restartNowEnabled: false
 restartNowChecked: false
+restartNowCommand: "systemctl reboot"
 EOF
 
-# Basic branding
+# Complete Calamares branding
 sudo tee "${CHROOT_DIR}/etc/calamares/branding/karmaos/branding.desc" > /dev/null <<EOF
 ---
-componentName: "karmaos"
+componentName: karmaos
+
 strings:
   productName: "KarmaOS ${VERSION}"
   shortProductName: "KarmaOS"
   version: "${VERSION}"
   shortVersion: "${VERSION}"
+  versionedName: "KarmaOS ${VERSION}"
+  shortVersionedName: "KarmaOS ${VERSION}"
+  bootloaderEntryName: "KarmaOS"
+  productUrl: "https://github.com/aporler/KarmaOS"
+  supportUrl: "https://github.com/aporler/KarmaOS/issues"
+  knownIssuesUrl: "https://github.com/aporler/KarmaOS/issues"
+  releaseNotesUrl: "https://github.com/aporler/KarmaOS/releases"
+
 images:
   productLogo: "/usr/share/karmaos/KarmaOSLogoPixel.png"
+  productIcon: "/usr/share/karmaos/KarmaOSLogoPixel.png"
+  productWelcome: "/usr/share/karmaos/KarmaOSBack.png"
+
 slideshow: ""
+
 style:
-  stylesheet: ""
+  sidebarBackground: "#2c3e50"
+  sidebarText: "#ffffff"
+  sidebarTextSelect: "#4d4d4d"
 EOF
 
 # Clean up apt cache and tmp outside chroot
