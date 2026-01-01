@@ -96,11 +96,15 @@ apt-get update
 apt-get install -y --no-install-recommends \
     linux-image-generic \
     linux-firmware \
-    linux-modules-extra-generic \
     casper \
     discover \
     laptop-detect \
     os-prober
+
+# Optional: meta package name differs across releases
+if apt-cache show linux-modules-extra-generic >/dev/null 2>&1; then
+    apt-get install -y --no-install-recommends linux-modules-extra-generic
+fi
 
 # Optional: present on some older releases, not on Ubuntu 24.04
 if apt-cache show lupin-casper >/dev/null 2>&1; then
