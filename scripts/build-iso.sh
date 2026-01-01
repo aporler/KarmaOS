@@ -174,6 +174,14 @@ apt-get install -y --no-install-recommends \
 # Installer (Calamares)
 apt-get install -y --no-install-recommends calamares
 
+# Some distros ship Calamares without configuration; try to install a settings package if available
+for pkg in calamares-settings-ubuntu calamares-settings-debian calamares-settings; do
+    if apt-cache show "$pkg" >/dev/null 2>&1; then
+        apt-get install -y --no-install-recommends "$pkg" || true
+        break
+    fi
+done
+
 # KarmaOS-Welcome runtime deps
 apt-get install -y --no-install-recommends \
     python3 \
@@ -336,6 +344,64 @@ VERSION="${VERSION}"
 HOME_URL="https://github.com/aporler/KarmaOS"
 SUPPORT_URL="https://github.com/aporler/KarmaOS/issues"
 BUG_REPORT_URL="https://github.com/aporler/KarmaOS/issues"
+EOF
+
+echo "==> Configuring Calamares..."
+sudo install -d "${CHROOT_DIR}/etc/calamares" "${CHROOT_DIR}/etc/calamares/modules" "${CHROOT_DIR}/etc/calamares/branding/karmaos"
+
+# Minimal Calamares settings to avoid 'refusing to continue startup without settings'
+sudo tee "${CHROOT_DIR}/etc/calamares/settings.conf" > /dev/null <<'EOF'
+modules-search: [ local ]
+
+sequence:
+  - show:
+      - welcome
+      - locale
+      - keyboard
+      - partition
+      - users
+      - summary
+  - exec:
+      - partition
+      - mount
+      - unpackfs
+      - users
+      - keyboard
+      - locale
+      - localecfg
+      - grubcfg
+      - bootloader
+      - umount
+  - show:
+      - finished
+
+branding: "karmaos"
+prompt-install: false
+dont-chroot: false
+EOF
+
+# Unpack filesystem from the live media (casper squashfs)
+sudo tee "${CHROOT_DIR}/etc/calamares/modules/unpackfs.conf" > /dev/null <<'EOF'
+unpack:
+    - source: "/cdrom/casper/filesystem.squashfs"
+        sourcefs: "squashfs"
+        destination: "/"
+EOF
+
+# Basic branding
+sudo tee "${CHROOT_DIR}/etc/calamares/branding/karmaos/branding.desc" > /dev/null <<EOF
+---
+componentName: "karmaos"
+strings:
+  productName: "KarmaOS ${VERSION}"
+  shortProductName: "KarmaOS"
+  version: "${VERSION}"
+  shortVersion: "${VERSION}"
+images:
+  productLogo: "/usr/share/karmaos/KarmaOSLogoPixel.png"
+slideshow: ""
+style:
+  stylesheet: ""
 EOF
 
 # Clean up apt cache and tmp outside chroot
