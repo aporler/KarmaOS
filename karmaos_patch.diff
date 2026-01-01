@@ -1,0 +1,310 @@
+*** Begin Patch
+*** Update File: .github/workflows/build-alpha.yml
+@@
+ jobs:
+   build-iso:
+     runs-on: ubuntu-24.04
++    timeout-minutes: 180
+@@
+       - name: Free up disk space
+         run: |
+           sudo rm -rf /usr/share/dotnet
+           sudo rm -rf /opt/ghc
+           sudo rm -rf /usr/local/share/boost
++          sudo rm -rf /usr/local/lib/android
++          sudo rm -rf /usr/share/swift
++          sudo rm -rf /opt/hostedtoolcache
+           sudo apt-get clean
+           df -h
+@@
+-      - name: Install dependencies
+-        run: |
+-          sudo apt-get update
+-          sudo apt-get install -y live-build debootstrap syslinux-utils xorriso
++      # dependencies are installed inside build script
+@@
+       - name: Build KarmaOS ISO
+-        run: bash scripts/build-iso.sh
++        run: |
++          bash -eux scripts/build-iso.sh
++
++      - name: List dist
++        run: ls -lh dist || true
+@@
+         with:
+           name: karmaos-26.01-amd64-iso
+-          path: dist/karmaos-26.01-amd64.iso
++          path: dist/*.iso
+           if-no-files-found: error
+@@
+       - name: Upload checksums
+         uses: actions/upload-artifact@v4
+         with:
+           name: checksums
+           path: dist/SHA256SUMS
++          if-no-files-found: error
+*** End Patch
+
+*** Begin Patch
+*** Update File: scripts/build-iso.sh
+@@
+ sudo mount --bind /proc "${CHROOT_DIR}/proc"
+ sudo mount --bind /sys "${CHROOT_DIR}/sys"
++sudo mount --bind /run "${CHROOT_DIR}/run" || true
++sudo cp /etc/resolv.conf "${CHROOT_DIR}/etc/resolv.conf"
+@@
+ echo "==> Installing packages (this takes 10-20 minutes)..."
+
+-sudo chroot "${CHROOT_DIR}" /bin/bash -c "
++sudo chroot "${CHROOT_DIR}" /bin/bash -euxo pipefail -c '
+@@
+-export DEBIAN_FRONTEND=noninteractive
+-apt-get update
+-
+-# Install kernel and essential packages first
+-apt-get install -y \
+-    linux-image-generic \
+-    linux-headers-generic \
+-    linux-firmware \
+-    casper \
+-    lupin-casper \
+-    discover \
+-    laptop-detect \
+-    os-prober
+-
+-# Install bootloader packages
+-apt-get install -y \
+-    grub-common \
+-    grub2-common \
+-    grub-pc-bin \
+-    grub-efi-amd64-bin \
+-    grub-efi-amd64-signed \
+-    shim-signed
+-
+-# Install desktop environment
+-apt-get install -y \
+-    kde-plasma-desktop \
+-    plasma-nm \
+-    plasma-pa \
+-    sddm \
+-    sddm-theme-breeze
+-
+-# Install applications
+-apt-get install -y \
+-    firefox \
+-    konsole \
+-    dolphin \
+-    kate \
+-    gwenview \
+-    okular \
+-    libreoffice \
+-    vlc
+-
+-# Install utilities
+-apt-get install -y \
+-    network-manager \
+-    wpasupplicant \
+-    systemsettings \
+-    partitionmanager \
+-    vim \
+-    wget \
+-    curl \
+-    git \
+-    htop \
+-    pulseaudio \
+-    fonts-noto \
+-    fonts-liberation \
+-    sudo \
+-    locales
+-
+-# Generate locales
+-locale-gen en_US.UTF-8
+-
+-# Configure SDDM
+-mkdir -p /etc/sddm.conf.d
+-cat > /etc/sddm.conf.d/karmaos.conf <<SDDM
+-[Theme]
+-Current=breeze
+-
+-[Users]
+-MaximumUid=60000
+-MinimumUid=1000
+-SDDM
+-
+-# Create live user for the live session
+-useradd -m -s /bin/bash -G sudo,adm,cdrom,audio,video,plugdev karmaos || true
+-echo 'karmaos:karmaos' | chpasswd
+-echo 'karmaos ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/karmaos
+-
+-# Enable autologin for live session
+-mkdir -p /etc/sddm.conf.d
+-cat > /etc/sddm.conf.d/autologin.conf <<AUTOLOGIN
+-[Autologin]
+-User=karmaos
+-Session=plasma
+-AUTOLOGIN
+-
+-# Clean up
+-apt-get clean
+-rm -rf /var/lib/apt/lists/*
+-rm -rf /tmp/*
+-"
++export DEBIAN_FRONTEND=noninteractive
++
++echo "==> Initial apt update"
++apt-get update
++
++# Install kernel and essential packages first
++apt-get install -y --no-install-recommends \
++    linux-image-generic \
++    linux-firmware \
++    casper \
++    lupin-casper \
++    discover \
++    laptop-detect \
++    os-prober
++
++# Force initramfs regen to ensure casper hooks are present
++update-initramfs -u || true
++
++# Install bootloader packages
++apt-get install -y --no-install-recommends \
++    grub-common \
++    grub2-common \
++    grub-pc-bin \
++    grub-efi-amd64-bin \
++    grub-efi-amd64-signed \
++    shim-signed
++
++# Install desktop environment
++apt-get install -y --no-install-recommends \
++    kde-plasma-desktop \
++    plasma-nm \
++    plasma-pa \
++    sddm \
++    sddm-theme-breeze
++
++# Install applications
++apt-get install -y --no-install-recommends \
++    firefox \
++    konsole \
++    dolphin \
++    kate \
++    gwenview \
++    okular \
++    libreoffice \
++    vlc
++
++# Install utilities
++apt-get install -y --no-install-recommends \
++    network-manager \
++    wpasupplicant \
++    systemsettings \
++    partitionmanager \
++    vim \
++    wget \
++    curl \
++    git \
++    htop \
++    pulseaudio \
++    fonts-noto \
++    fonts-liberation \
++    sudo \
++    locales
++
++# Generate locales
++locale-gen en_US.UTF-8
++
++# Configure SDDM
++mkdir -p /etc/sddm.conf.d
++cat > /etc/sddm.conf.d/karmaos.conf <<SDDM
++[Theme]
++Current=breeze
++
++[Users]
++MaximumUid=60000
++MinimumUid=1000
++SDDM
++
++# Create live user for the live session
++useradd -m -s /bin/bash -G sudo,adm,cdrom,audio,video,plugdev karmaos || true
++echo "karmaos:karmaos" | chpasswd
++echo "karmaos ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/karmaos
++
++# Enable autologin for live session
++mkdir -p /etc/sddm.conf.d
++cat > /etc/sddm.conf.d/autologin.conf <<AUTOLOGIN
++[Autologin]
++User=karmaos
++Session=plasma
++AUTOLOGIN
++
++# Enable services for live boot
++systemctl enable sddm NetworkManager
++
++'
++
++# Clean up apt cache and tmp outside chroot
++sudo chroot "${CHROOT_DIR}" apt-get clean
++sudo rm -rf "${CHROOT_DIR}/var/lib/apt/lists/"*
++sudo rm -rf "${CHROOT_DIR}/tmp"/*
+@@
+ sudo umount "${CHROOT_DIR}/dev/pts" || true
+ sudo umount "${CHROOT_DIR}/dev" || true
++sudo umount "${CHROOT_DIR}/run" || true
+@@
+ mkdir -p "${ISO_DIR}"/{casper,isolinux,boot/grub}
++
++# Generate manifest files expected by casper
++sudo chroot "${CHROOT_DIR}" dpkg-query -W --showformat='${Package} ${Version}\n' \
++    | sudo tee "${ISO_DIR}/casper/filesystem.manifest" > /dev/null
++sudo cp "${ISO_DIR}/casper/filesystem.manifest" "${ISO_DIR}/casper/filesystem.manifest-desktop"
+@@
+-# Copy kernel and initrd
+-KERNEL=$(ls "${CHROOT_DIR}"/boot/vmlinuz-* | head -1)
+-INITRD=$(ls "${CHROOT_DIR}"/boot/initrd.img-* | head -1)
+-
+-sudo cp "${KERNEL}" "${ISO_DIR}/casper/vmlinuz"
+-sudo cp "${INITRD}" "${ISO_DIR}/casper/initrd"
++KERNEL=$(find "${CHROOT_DIR}/boot" -maxdepth 1 -type f -name "vmlinuz-*" | sort | tail -n1)
++INITRD=$(find "${CHROOT_DIR}/boot" -maxdepth 1 -type f -name "initrd.img-*" | sort | tail -n1)
++
++if [[ -z "${KERNEL}" || -z "${INITRD}" ]]; then
++  echo "ERROR: Kernel or initrd not found in chroot /boot"
++  sudo ls -lah "${CHROOT_DIR}/boot" || true
++  exit 1
++fi
++
++sudo cp "${KERNEL}" "${ISO_DIR}/casper/vmlinuz"
++sudo cp "${INITRD}" "${ISO_DIR}/casper/initrd"
+@@
+ # Create ISOLINUX config
+ sudo tee "${ISO_DIR}/isolinux/isolinux.cfg" > /dev/null <<EOF
+@@
+-MENU TITLE KarmaOS ${VERSION} Boot Menu
+-MENU BACKGROUND #003366
++MENU TITLE KarmaOS ${VERSION} Boot Menu
+@@
+-LABEL live-safe
+-    MENU LABEL Start KarmaOS (Safe Mode)
+-    KERNEL /casper/vmlinuz
+-    APPEND initrd=/casper/initrd boot=casper xforcevesa nomodeset quiet splash ---
+-
+-LABEL memtest
+-    MENU LABEL Memory Test
+-    KERNEL /isolinux/memtest
+-
+ LABEL hd
+     MENU LABEL Boot from Hard Disk
+     LOCALBOOT 0x80
+ EOF
+@@
+ sudo cp /usr/lib/grub/x86_64-efi-signed/grubx64.efi.signed "${ISO_DIR}/EFI/boot/grubx64.efi" 2>/dev/null || true
+ if [ -f /usr/lib/shim/shimx64.efi.signed ]; then
+     sudo cp /usr/lib/shim/shimx64.efi.signed "${ISO_DIR}/EFI/boot/bootx64.efi"
+ fi
++
++# Also provide grub.cfg at EFI/boot for some UEFI implementations
++sudo mkdir -p "${ISO_DIR}/EFI/boot"
++sudo cp "${ISO_DIR}/boot/grub/grub.cfg" "${ISO_DIR}/EFI/boot/grub.cfg" || true
+*** End Patch

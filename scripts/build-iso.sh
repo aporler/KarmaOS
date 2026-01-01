@@ -181,8 +181,12 @@ apt-get install -y --no-install-recommends \
     python3-gi-cairo \
     gir1.2-gtk-3.0 \
     gir1.2-vte-2.91 \
-    gir1.2-webkit2-4.0 \
     x11-xkb-utils
+
+# WebKit for web view (try modern version first, fallback to older if needed)
+apt-get install -y --no-install-recommends gir1.2-webkit-6.0 || \
+apt-get install -y --no-install-recommends gir1.2-webkit2-4.1 || \
+echo "Warning: WebKit GTK not available, web page will not work"
 
 # Generate locales
 locale-gen en_US.UTF-8

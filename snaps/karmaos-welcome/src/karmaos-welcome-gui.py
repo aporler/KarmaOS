@@ -6,8 +6,25 @@ Live CD / First Boot experience
 
 import gi
 gi.require_version('Gtk', '3.0')
-gi.require_version('WebKit2', '4.0')
-from gi.repository import Gtk, GdkPixbuf, GLib, Gdk, WebKit2
+# Try to load WebKit - prefer 6.0, fallback to 4.1, then 4.0
+try:
+    gi.require_version('WebKit', '6.0')
+    from gi.repository import Gtk, GdkPixbuf, GLib, Gdk
+    from gi.repository import WebKit as WebKit2
+    WEBKIT_AVAILABLE = True
+except (ValueError, ImportError):
+    try:
+        gi.require_version('WebKit2', '4.1')
+        from gi.repository import Gtk, GdkPixbuf, GLib, Gdk, WebKit2
+        WEBKIT_AVAILABLE = True
+    except (ValueError, ImportError):
+        try:
+            gi.require_version('WebKit2', '4.0')
+            from gi.repository import Gtk, GdkPixbuf, GLib, Gdk, WebKit2
+            WEBKIT_AVAILABLE = True
+        except (ValueError, ImportError):
+            from gi.repository import Gtk, GdkPixbuf, GLib, Gdk
+            WEBKIT_AVAILABLE = False
 import os
 import subprocess
 
@@ -363,16 +380,27 @@ class KarmaOSWelcome(Gtk.Window):
         title.set_markup('<span size="large" weight="bold">Ressources KarmaOS</span>')
         page.pack_start(title, False, False, 0)
 
-        # WebKit WebView
-        self.webview = WebKit2.WebView()
-        self.webview.load_uri("https://karmaos.ovh/karmaos-welcome/")
-        self.webview.set_vexpand(True)
-        self.webview.set_hexpand(True)
+        if WEBKIT_AVAILABLE:
+            # WebKit WebView
+            self.webview = WebKit2.WebView()
+            self.webview.load_uri("https://karmaos.ovh/karmaos-welcome/")
+            self.webview.set_vexpand(True)
+            self.webview.set_hexpand(True)
 
-        scroll = Gtk.ScrolledWindow()
-        scroll.set_vexpand(True)
-        scroll.add(self.webview)
-        page.pack_start(scroll, True, True, 0)
+            scroll = Gtk.ScrolledWindow()
+            scroll.set_vexpand(True)
+            scroll.add(self.webview)
+            page.pack_start(scroll, True, True, 0)
+        else:
+            # Fallback: show link as text
+            info = Gtk.Label()
+            info.set_markup(
+                '<span size="large">Pour plus d\'informations, visitez :\n\n'
+                '<a href="https://karmaos.ovh/karmaos-welcome/">https://karmaos.ovh/karmaos-welcome/</a></span>'
+            )
+            info.set_justify(Gtk.Justification.CENTER)
+            info.set_line_wrap(True)
+            page.pack_start(info, True, True, 0)
 
         # Close button
         close_btn = Gtk.Button.new_with_label("Fermer")
