@@ -365,8 +365,9 @@ EOF
 echo "==> Configuring Calamares..."
 sudo install -d "${CHROOT_DIR}/etc/calamares" "${CHROOT_DIR}/etc/calamares/modules" "${CHROOT_DIR}/etc/calamares/branding/karmaos"
 
-# Minimal Calamares settings to avoid 'refusing to continue startup without settings'
+# Complete Calamares settings with all required keys
 sudo tee "${CHROOT_DIR}/etc/calamares/settings.conf" > /dev/null <<'EOF'
+---
 modules-search: [ local ]
 
 sequence:
@@ -391,9 +392,16 @@ sequence:
   - show:
       - finished
 
-branding: "karmaos"
+branding: karmaos
+
 prompt-install: false
 dont-chroot: false
+
+oem-setup: false
+disable-cancel: false
+disable-cancel-during-exec: false
+hide-back-and-next-during-exec: false
+quit-at-end: false
 EOF
 
 # Unpack filesystem from the live media (casper squashfs)
@@ -514,6 +522,18 @@ sudo tee "${CHROOT_DIR}/etc/calamares/modules/summary.conf" > /dev/null <<'EOF'
 ---
 EOF
 
+# Show module (for slideshow/presentation)
+sudo tee "${CHROOT_DIR}/etc/calamares/modules/show.qml" > /dev/null <<'EOF'
+import QtQuick 2.0
+import calamares.slideshow 1.0
+
+Presentation {
+    id: presentation
+    function onActivate() {}
+    function onLeave() {}
+}
+EOF
+
 # Hide reboot checkbox/button on the finish page (avoid "Finish & Reboot")
 sudo tee "${CHROOT_DIR}/etc/calamares/modules/finished.conf" > /dev/null <<'EOF'
 ---
@@ -522,35 +542,46 @@ restartNowChecked: false
 restartNowCommand: "systemctl reboot"
 EOF
 
-# Complete Calamares branding
+# Complete Calamares branding with all required fields
 sudo tee "${CHROOT_DIR}/etc/calamares/branding/karmaos/branding.desc" > /dev/null <<EOF
 ---
 componentName: karmaos
 
 strings:
-  productName: "KarmaOS ${VERSION}"
-  shortProductName: "KarmaOS"
-  version: "${VERSION}"
-  shortVersion: "${VERSION}"
-  versionedName: "KarmaOS ${VERSION}"
-  shortVersionedName: "KarmaOS ${VERSION}"
-  bootloaderEntryName: "KarmaOS"
-  productUrl: "https://github.com/aporler/KarmaOS"
-  supportUrl: "https://github.com/aporler/KarmaOS/issues"
-  knownIssuesUrl: "https://github.com/aporler/KarmaOS/issues"
-  releaseNotesUrl: "https://github.com/aporler/KarmaOS/releases"
+  productName: KarmaOS ${VERSION}
+  shortProductName: KarmaOS
+  version: ${VERSION}
+  shortVersion: ${VERSION}
+  versionedName: KarmaOS ${VERSION}
+  shortVersionedName: KarmaOS ${VERSION}
+  bootloaderEntryName: KarmaOS
+  productUrl: https://github.com/aporler/KarmaOS
+  supportUrl: https://github.com/aporler/KarmaOS/issues
+  knownIssuesUrl: https://github.com/aporler/KarmaOS/issues
+  releaseNotesUrl: https://github.com/aporler/KarmaOS/releases
 
 images:
-  productLogo: "/usr/share/karmaos/KarmaOSLogoPixel.png"
-  productIcon: "/usr/share/karmaos/KarmaOSLogoPixel.png"
-  productWelcome: "/usr/share/karmaos/KarmaOSBack.png"
+  productLogo: /usr/share/karmaos/KarmaOSLogoPixel.png
+  productIcon: /usr/share/karmaos/KarmaOSLogoPixel.png
+  productWelcome: /usr/share/karmaos/KarmaOSBack.png
 
-slideshow: ""
+slideshow: show.qml
 
 style:
   sidebarBackground: "#2c3e50"
   sidebarText: "#ffffff"
   sidebarTextSelect: "#4d4d4d"
+  sidebarTextHighlight: "#3498db"
+
+uploadServer:
+  type: none
+
+windowExpanding: normal
+windowSize: 800px,600px
+windowPlacement: center
+
+sidebar: widget
+navigation: widget
 EOF
 
 # Clean up apt cache and tmp outside chroot
