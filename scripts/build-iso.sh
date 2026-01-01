@@ -174,14 +174,6 @@ apt-get install -y --no-install-recommends \
 # Installer (Calamares)
 apt-get install -y --no-install-recommends calamares
 
-# Some distros ship Calamares without configuration; try to install a settings package if available
-for pkg in calamares-settings-ubuntu calamares-settings-debian calamares-settings; do
-    if apt-cache show "$pkg" >/dev/null 2>&1; then
-        apt-get install -y --no-install-recommends "$pkg" || true
-        break
-    fi
-done
-
 # KarmaOS-Welcome runtime deps
 apt-get install -y --no-install-recommends \
     python3 \
@@ -312,10 +304,7 @@ sudo tee "${CHROOT_DIR}/usr/local/bin/karmaos-installer" > /dev/null <<'EOF'
 #!/usr/bin/env bash
 set -e
 
-if command -v pkexec >/dev/null 2>&1; then
-    exec pkexec calamares
-fi
-
+# In the live session, user 'ubuntu' is passwordless sudo; avoid pkexec prompts.
 exec sudo -E calamares
 EOF
 sudo chmod +x "${CHROOT_DIR}/usr/local/bin/karmaos-installer"
@@ -331,6 +320,13 @@ Terminal=false
 Categories=System;
 EOF
 sudo chmod +x "${CHROOT_DIR}/home/ubuntu/Desktop/Install KarmaOS.desktop"
+
+# Remove any stray installer launchers that might appear as "Install Debian"
+sudo rm -f \
+    "${CHROOT_DIR}/home/ubuntu/Desktop/Install Debian.desktop" \
+    "${CHROOT_DIR}/home/ubuntu/Desktop/Install%20Debian.desktop" \
+    "${CHROOT_DIR}/usr/share/applications/install-debian.desktop" \
+    "${CHROOT_DIR}/usr/share/applications/debian-installer.desktop" || true
 sudo chown -R 1000:1000 "${CHROOT_DIR}/home/ubuntu" || true
 
 # Basic distro branding
@@ -386,6 +382,12 @@ unpack:
     - source: "/cdrom/casper/filesystem.squashfs"
         sourcefs: "squashfs"
         destination: "/"
+EOF
+
+# Hide reboot checkbox/button on the finish page (avoid "Finish & Reboot")
+sudo tee "${CHROOT_DIR}/etc/calamares/modules/finished.conf" > /dev/null <<'EOF'
+restartNowEnabled: false
+restartNowChecked: false
 EOF
 
 # Basic branding
