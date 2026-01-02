@@ -421,7 +421,7 @@ unpack:
   - source: "/cdrom/casper/filesystem.squashfs"
     sourcefs: "squashfs"
     destination: ""
-        exclude: [ "dev/*", "proc/*", "sys/*", "run/*", "tmp/*", "mnt/*", "media/*", "cdrom/*", "lost+found" ]
+    exclude: [ "dev/*", "proc/*", "sys/*", "run/*", "tmp/*", "mnt/*", "media/*", "cdrom/*", "lost+found" ]
 EOF
 
 # Users module - create user account
