@@ -377,7 +377,7 @@ sudo install -d "${CHROOT_DIR}/etc/calamares" "${CHROOT_DIR}/etc/calamares/modul
 # Complete Calamares settings with all required keys
 sudo tee "${CHROOT_DIR}/etc/calamares/settings.conf" > /dev/null <<'EOF'
 ---
-modules-search: [ local ]
+modules-search: [ local, /usr/lib/x86_64-linux-gnu/calamares/modules, /usr/lib/calamares/modules, /usr/share/calamares/modules ]
 
 sequence:
   - show:
