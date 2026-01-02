@@ -159,6 +159,7 @@ apt-get install -y --no-install-recommends \
     dnsutils \
     isc-dhcp-client \
     util-linux \
+    squashfs-tools \
     parted \
     dosfstools \
     e2fsprogs \
