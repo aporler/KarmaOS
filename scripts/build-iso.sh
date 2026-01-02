@@ -420,6 +420,7 @@ unpack:
   - source: "/cdrom/casper/filesystem.squashfs"
     sourcefs: "squashfs"
     destination: ""
+        exclude: [ "dev/*", "proc/*", "sys/*", "run/*", "tmp/*", "mnt/*", "media/*", "cdrom/*", "lost+found" ]
 EOF
 
 # Users module - create user account
@@ -458,22 +459,7 @@ EOF
 # Mount module
 sudo tee "${CHROOT_DIR}/etc/calamares/modules/mount.conf" > /dev/null <<'EOF'
 ---
-extraMounts:
-  - device: proc
-    fs: proc
-    mountPoint: /proc
-  - device: sys
-    fs: sysfs
-    mountPoint: /sys
-  - device: /dev
-    mountPoint: /dev
-    options: bind
-  - device: tmpfs
-    fs: tmpfs
-    mountPoint: /run
-  - device: /run/udev
-    mountPoint: /run/udev
-    options: bind
+# Use Calamares defaults; pre-binding /dev,/run,/proc,/sys can break unpackfs/rsync.
 EOF
 
 # Bootloader module
