@@ -391,7 +391,7 @@ sequence:
   - exec:
       - partition
       - mount
-      - unpackfs
+      - unpackfsc
       - users
       - keyboard
       - locale
@@ -415,13 +415,12 @@ quit-at-end: false
 EOF
 
 # Unpack filesystem from the live media (casper squashfs)
-sudo tee "${CHROOT_DIR}/etc/calamares/modules/unpackfs.conf" > /dev/null <<'EOF'
+# Prefer Calamares' C++ module (unpackfsc) which uses unsquashfs for squashfs images.
+sudo tee "${CHROOT_DIR}/etc/calamares/modules/unpackfsc.conf" > /dev/null <<'EOF'
 ---
-unpack:
-  - source: "/cdrom/casper/filesystem.squashfs"
-    sourcefs: "squashfs"
-    destination: ""
-    exclude: [ "dev/*", "proc/*", "sys/*", "run/*", "tmp/*", "mnt/*", "media/*", "cdrom/*", "lost+found" ]
+source: "/cdrom/casper/filesystem.squashfs"
+sourcefs: "squashfs"
+destination: "/"
 EOF
 
 # Users module - create user account
