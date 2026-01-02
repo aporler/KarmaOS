@@ -166,6 +166,7 @@ apt-get install -y --no-install-recommends \
     xfsprogs \
     ntfs-3g \
     gdisk \
+    rsync \
     systemsettings \
     partitionmanager \
     vim \
